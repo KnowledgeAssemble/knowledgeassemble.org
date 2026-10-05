@@ -1,4 +1,7 @@
 import { Outlet, RouterProvider, ScrollRestoration, createBrowserRouter } from 'react-router-dom'
+import SiteHeader from './components/layout/SiteHeader'
+import SiteFooter from './components/layout/SiteFooter'
+import SkipLink from './components/layout/SkipLink'
 import HomePage from './pages/HomePage'
 import ProjectsPage from './pages/ProjectsPage'
 import PrinciplesPage from './pages/PrinciplesPage'
@@ -10,7 +13,12 @@ function RootLayout() {
   return (
     <>
       <ScrollRestoration />
-      <Outlet />
+      <SkipLink />
+      <SiteHeader />
+      <main id="main-content" tabIndex={-1}>
+        <Outlet />
+      </main>
+      <SiteFooter />
     </>
   )
 }

@@ -21,21 +21,17 @@ like errors otherwise.
 
 ## Current state
 
-Phases 1 and 2 are committed. `src/App.tsx` routes the five pages plus a
-not-found route to `src/pages/*`, each rendering a placeholder `<h1>` only.
-**No page internals exist yet** — that is Phase 4. Two consequences worth
-knowing before Phase 3:
+Phases 1–4 are committed. `src/App.tsx` routes the five pages plus a not-found
+route through a `RootLayout` that renders `SkipLink`, `SiteHeader`, `<main>`,
+and `SiteFooter`. Pages are built on the design tokens in
+`src/styles/index.css` (imported from `src/main.tsx`); content lives in
+`src/content/` and external URLs in `src/config/links.ts`. React replaces
+`#root`'s children, so the hydrated page — not the static shell in `index.html`
+— provides the landmarks.
 
-- `src/styles/index.css` does not exist and is not imported anywhere, so every
-  Tailwind utility class is currently inert. The 27 kB CSS bundle is `@font-face`
-  rules only. Phase 3 must both create the file and import it from `src/main.tsx`.
-- React replaces `#root`'s children, which **discards the static shell in
-  `index.html`**. With JavaScript on — the normal case — the document currently
-  has *no* landmarks at all. This is expected per §6.2 and Phase 4 restores them
-  via `SkipLink` / `SiteHeader` / `SiteFooter`, but it means the no-JS
-  mitigation and the hydrated page disagree until then.
-
-Phase 3 (design tokens) is next.
+Phase 5 (content layer) is next. A first cut of the content already exists
+because the Phase 4 pages required it; Phase 5 should complete it and verify
+every PRD heading string against the pages.
 
 Stack is pinned in plan §4.1: **React 19 + Vite 7 + TypeScript strict +
 Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.ts`, no PostCSS) +

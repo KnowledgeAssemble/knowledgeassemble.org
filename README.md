@@ -33,7 +33,7 @@ npm run preview    # serve the production build
 npm run typecheck  # tsc --noEmit
 ```
 
-Status: routing shell only. The five routes (`/`, `/projects`, `/principles`, `/community`, `/about`) plus a not-found route render placeholder headings until the pages land in Phase 4. With JavaScript disabled, the static shell in `index.html` is what renders.
+Status: Phases 3 and 4 complete. The five routes (`/`, `/projects`, `/principles`, `/community`, `/about`) plus a not-found route render full pages built on the design tokens in `src/styles/index.css`. Content lives in `src/content/` and external URLs in `src/config/links.ts`. With JavaScript disabled, the static shell in `index.html` is what renders.
 
 ## Deploy target: Vercel
 
