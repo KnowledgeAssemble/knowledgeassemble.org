@@ -21,9 +21,21 @@ like errors otherwise.
 
 ## Current state
 
-Phase 1 is committed (`8ef49cb`): the workspace scaffold exists but there is no
-application code yet. `src/main.tsx` renders `null`, so the page is blank after
-mount. Phase 2 (routing shell) is next.
+Phases 1 and 2 are committed. `src/App.tsx` routes the five pages plus a
+not-found route to `src/pages/*`, each rendering a placeholder `<h1>` only.
+**No page internals exist yet** — that is Phase 4. Two consequences worth
+knowing before Phase 3:
+
+- `src/styles/index.css` does not exist and is not imported anywhere, so every
+  Tailwind utility class is currently inert. The 27 kB CSS bundle is `@font-face`
+  rules only. Phase 3 must both create the file and import it from `src/main.tsx`.
+- React replaces `#root`'s children, which **discards the static shell in
+  `index.html`**. With JavaScript on — the normal case — the document currently
+  has *no* landmarks at all. This is expected per §6.2 and Phase 4 restores them
+  via `SkipLink` / `SiteHeader` / `SiteFooter`, but it means the no-JS
+  mitigation and the hydrated page disagree until then.
+
+Phase 3 (design tokens) is next.
 
 Stack is pinned in plan §4.1: **React 19 + Vite 7 + TypeScript strict +
 Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.ts`, no PostCSS) +
@@ -75,9 +87,12 @@ Never force-push, rewrite history, or amend a pushed commit.
 Do not invent answers to these; they are organizational decisions (§10):
 
 - Domain `knowledgeassemble.org` is **unregistered** — blocks Phase 7 canonical URLs.
-- **Deploy target** unchosen — blocks Phase 2 SPA rewrite config.
 - **CSR vs prerender** sign-off — affects Phase 2 (§4.2).
 - **Contact link** — include only if a real destination exists; do not invent an email.
+
+Resolved: deploy target is **Vercel** (§10 Q4), so `vercel.json` is the SPA
+rewrite. If the host ever changes, that rule must be migrated — a stale
+`vercel.json` on another host means deep links silently 404.
 
 ## Screenshots
 

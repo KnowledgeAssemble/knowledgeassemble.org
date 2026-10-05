@@ -245,7 +245,7 @@ Without a rewrite rule, a direct request to `/principles` returns 404 on Vercel,
 | Vercel | `vercel.json` | `{"rewrites": [{"source": "/(.*)", "destination": "/index.html"}]}` |
 | GitHub Pages | `public/404.html` | Redirect script to `/`, preserving the path |
 
-Deploy target is not yet chosen (§10 Q4). All the primary options offer a free tier and custom-domain support, so this decision can follow domain registration rather than gate it. Whichever is selected, its config file ships in Phase 2 and is verified in Phase 11.
+**Deploy target is Vercel**, decided 2026-10-05 (§10 Q4). `vercel.json` is committed and carries the rewrite rule. The other rows remain documented because a host change requires migrating the rule — a `vercel.json` left on a Netlify or GitHub Pages deploy means deep links silently 404. Vercel is verified in Phase 11.
 
 ### 4.5 Workspace File Structure
 
@@ -258,9 +258,7 @@ knowledgeassemble.org/
 ├── public/
 │   ├── favicon.svg
 │   ├── og-image.png
-│   ├── robots.txt
-│   ├── _redirects                     # SPA fallback (see §4.4)
-│   └── 404.html                       # GitHub Pages SPA fallback (see §4.4)
+│   └── robots.txt
 ├── src/
 │   ├── config/
 │   │   ├── links.ts                   # Centralized external URLs (verified, see §5.1)
@@ -317,7 +315,9 @@ knowledgeassemble.org/
 
 **Removed from the previous draft:** `tailwind.config.ts`, `postcss.config.js` (Tailwind v4 needs neither), `og-image.png` without a generating step (now Phase 6).
 
-**Added:** `SkipLink.tsx`, `Section.tsx`, `SectionHeading.tsx` (both from PRD §34), `useDocumentMeta.ts`, `types/env.d.ts`, `tsconfig.node.json`, `.gitignore`, `README.md`, `_redirects`, `404.html`, `vercel.json`.
+**Added:** `SkipLink.tsx`, `Section.tsx`, `SectionHeading.tsx` (both from PRD §34), `useDocumentMeta.ts`, `types/env.d.ts`, `tsconfig.node.json`, `.gitignore`, `README.md`, `vercel.json`.
+
+**Removed in the Vercel decision:** `public/_redirects` and `public/404.html`. Both existed only for hosts that are no longer candidates (§10 Q4).
 
 **Already committed (2026-10-05):** `.gitignore`, `LICENSE` (MIT). The tree root is `knowledgeassemble.org/`, matching the repo name.
 
@@ -516,7 +516,7 @@ Content data files land in Phase 5, after the shell renders, so page structure i
 
 #### Phase 2: Routing Shell & Static Host Configuration
 - Define the 5 routes + `NotFoundPage` in `App.tsx` using `createBrowserRouter`; add `ScrollRestoration`.
-- Commit the host rewrite config from §4.4 (`_redirects`, `vercel.json`, `404.html`) for the chosen deploy target.
+- Commit the host rewrite config from §4.4 for the chosen deploy target — `vercel.json` for Vercel (§10 Q4).
 - Set up semantic shell markup in `index.html` per §6.2, including `lang="en"` and the `<noscript>` GitHub fallback.
 - Verify `npm run dev` serves all routes and that a hard refresh on `/principles` does not 404.
 
@@ -661,9 +661,14 @@ Reinforcing PRD §31: no accounts, auth, CMS, blog engine, comments, newsletter,
 | # | Question | Blocks | Default if unanswered |
 | :--- | :--- | :--- | :--- |
 | 3 | **Domain registration + deployed origin** for `siteUrl`. Confirmed 2026-10-05: `knowledgeassemble.org` is **not registered** — `whois` returns "Domain not found" and there are no A/NS/SOA records. Registering it is an organizational purchase decision, not a build step. | Phase 7 — canonical URLs, `og:url` | Blocked — canonical cannot be absolute without it |
-| 4 | **Deploy target** (Vercel / Netlify / Cloudflare / GH Pages) | Phase 2 — which rewrite config in §4.4 | Blocked — deep links will 404 |
 | 5 | **Is CSR acceptable** given PRD §22 "do not make accessibility dependent on JavaScript"? (§4.2) | Phase 2 — whether V1 adds prerendering | Accept CSR + document; add `vite-plugin-ssg` if rejected |
 | 7 | Contact link in footer — include only if a real destination exists (PRD §11; do not invent an email) | Phase 4 — footer contents | Omit |
+
+**Note on Q4 — resolved 2026-10-05: deploy target is Vercel.** `vercel.json` is
+committed in Phase 2. §4.4's other options (`public/_redirects` for Netlify /
+Cloudflare Pages, `public/404.html` for GitHub Pages) are no longer needed. If the
+host changes, the rewrite rule must be migrated — a `vercel.json` left in place on a
+Netlify deploy silently deep-links to a 404. Vercel verified in Phase 11.
 
 **Note on Q3 — the domain does not exist yet.** Verified 2026-10-05: `whois knowledgeassemble.org` returns "Domain not found", and `knowledgeassemble.org`, `www.knowledgeassemble.org`, and `knowledgeassembly.org` all have zero DNS records. The repo is named for a domain the organization does not yet control.
 
@@ -672,8 +677,8 @@ This does not block Phases 1–6. It becomes blocking at Phase 7, and it is not 
 - **Phases 1–6 proceed normally.** Set `siteUrl` to a temporary placeholder (e.g. `https://knowledgeassembly.github.io/knowledgeassemble.org/`) if an absolute URL is needed for early testing, and never ship canonical tags pointing at an unregistered host.
 - **Two hosting paths, different costs:**
   - **GitHub Pages** — free, but the site lives at `knowledgeassembly.github.io/knowledgeassemble.org/` and `knowledgeassemble.org` must be added later as a custom domain.
-  - **Vercel / Netlify / Cloudflare** — free tier, and can attach a custom domain immediately once registered. All support the SPA rewrites in §4.4.
-- **Sequencing matters.** Register the domain *before* choosing the host (§10 Q4) if the host is meant to serve it, since some hosts make custom-domain setup much easier on first connect.
+  - **Vercel** — free tier, and can attach a custom domain immediately once registered. **Chosen** (§10 Q4); `vercel.json` already carries the SPA rewrite.
+- **Sequencing matters.** Register the domain and attach it to Vercel, since some hosts make custom-domain setup much easier on first connect. The host is already chosen (§10 Q4); only the domain is outstanding.
 - **Decide apex vs `www`** before Phase 7 and apply it consistently in `siteUrl`, canonical tags, `og:url`, and the sitemap. Set the other as a 301 redirect, never both as canonical.
 - **HTTPS is handled by the host** via automatic certificates; there is no certificate work to do in this repo.
 
@@ -689,7 +694,8 @@ Facts confirmed against the live `KnowledgeAssembly` GitHub org and `open-edu` r
 
 - Org `KnowledgeAssembly` (id `312102580`), created 2026-08-02. Brand spelling is `KnowledgeAssemble`; the GitHub handle is `KnowledgeAssembly`.
 - The website repo `KnowledgeAssembly/knowledgeassemble.org` was created 2026-10-05, is **public**, and is **MIT-licensed**. It is named for the production domain `knowledgeassemble.org`, not for the brand spelling — the org (`KnowledgeAssembly`), the repo (`knowledgeassemble.org`), and the brand (`KnowledgeAssemble`) are three distinct strings.
-- Local clone directory is `knowledgeassemble.org`, matching the repo name. The path contains a dot, which is fine for Git and Vite but worth knowing when scripting.
+- Remote repo directory is `KnowledgeAssembly/knowledgeassemble.org`, matching the repo name. The path contains a dot, which is fine for Git and Vite but worth knowing when scripting.
+- A **local** clone of that repo may still sit in a directory named after the pre-rename project (e.g. `knowledgeassemble-website`) — `git remote -v` is the authority, not the local folder name.
 
 ### 11.2 OpenEdu Repos — Disambiguation Required
 
