@@ -250,7 +250,7 @@ Deploy target is not yet chosen (§10). Whichever is selected, its config file s
 ### 4.5 Workspace File Structure
 
 ```text
-knowledgeassemble-website/
+knowledgeassemble.org/
 ├── docs/
 │   ├── KNOWLEDGEASSEMBLE-WEBSITE-V1.md
 │   ├── IMPLEMENTATION_PLAN.md
@@ -304,9 +304,9 @@ knowledgeassemble-website/
 │   │   └── index.css                  # @theme tokens, base layer, reduced-motion reset
 │   ├── App.tsx                        # Route definitions & scroll restoration
 │   └── main.tsx                       # React root entry, fontsource imports
-├── .gitignore
+├── .gitignore                         # committed ✓
 ├── index.html
-├── LICENSE                            # REQUIRED — see Phase 1
+├── LICENSE                            # MIT — committed ✓
 ├── package.json
 ├── tsconfig.json
 ├── tsconfig.node.json
@@ -317,7 +317,9 @@ knowledgeassemble-website/
 
 **Removed from the previous draft:** `tailwind.config.ts`, `postcss.config.js` (Tailwind v4 needs neither), `og-image.png` without a generating step (now Phase 6).
 
-**Added:** `LICENSE`, `SkipLink.tsx`, `Section.tsx`, `SectionHeading.tsx` (both from PRD §34), `useDocumentMeta.ts`, `types/env.d.ts`, `tsconfig.node.json`, `.gitignore`, `README.md`, `_redirects`, `404.html`, `vercel.json`.
+**Added:** `SkipLink.tsx`, `Section.tsx`, `SectionHeading.tsx` (both from PRD §34), `useDocumentMeta.ts`, `types/env.d.ts`, `tsconfig.node.json`, `.gitignore`, `README.md`, `_redirects`, `404.html`, `vercel.json`.
+
+**Already committed (2026-10-05):** `.gitignore`, `LICENSE` (MIT). The tree root is `knowledgeassemble.org/`, matching the repo name.
 
 ### 4.6 Layout Container
 
@@ -335,7 +337,7 @@ URLs below were **verified against the live KnowledgeAssembly GitHub organizatio
 export const LINKS = {
   // Verified against github.com/KnowledgeAssembly — see §10 Q1 (resolved).
   githubOrg: "https://github.com/KnowledgeAssembly",
-  githubRepo: "https://github.com/KnowledgeAssembly/knowledgeassemble-website", // this repo (private)
+  githubRepo: "https://github.com/KnowledgeAssembly/knowledgeassemble.org", // this repo
 
   // OpenEdu flagship. Repo is the canonical artifact; the Pages site is its
   // published demo. Note the hyphen: the org has several similarly named
@@ -349,10 +351,9 @@ export const LINKS = {
 
 **Org naming:** the GitHub org is `KnowledgeAssembly` while the brand is `KnowledgeAssemble`. This is not a typo — do not "correct" URLs to match the brand spelling.
 
-**`githubRepo` is currently private.** An unauthenticated `curl` returns 404, which is correct behavior, not a broken link. Two consequences:
+**This repository is public and MIT-licensed.** The repo is named `knowledgeassemble.org` to match the production domain, so `gh api repos/KnowledgeAssembly/knowledgeassemble.org` and a bare `curl` both return 200. License and visibility questions are closed (§10 Q2, Q6).
 
-- It must be flipped to public before launch. PRD §10 asserts "open source, by default" and §16 requires an open-source identity; a site whose own footer links to an unreachable repository undercuts both. Tracked as §10 Q6.
-- Until then, verify it with an authenticated call (`gh api repos/KnowledgeAssembly/knowledgeassemble-website`) rather than a bare `curl`, so a privacy 404 is not mistaken for a typo.
+**The repo name is a URL, not a typo.** It matches the intended production domain `knowledgeassemble.org` (§10 Q3). Do not "normalize" it to `knowledgeassemble-website`. Note that the repo name, the GitHub org (`KnowledgeAssembly`), and the brand (`KnowledgeAssemble`) are three distinct strings — verify each against this registry rather than assuming they match.
 
 Every consumer imports from `LINKS`. A `rg -n 'https?://' src/` check in Phase 11 must return **zero** matches outside this file — PRD §26 forbids scattered URLs, and §8 makes it a Definition-of-Done item.
 
@@ -470,7 +471,7 @@ PRD §23 list, plus the two intermediate widths that catch real breakpoints:
 This sequence follows PRD §33 — *"Do not start by building a design system. Create only the primitives actually required by the V1 pages."* It therefore **reverses the previous draft**, which pre-built Button, Badge, Logo, and ExternalLink in Phase 2 before any page existed.
 
 ```
-Phase 1: Licensing, Repo Setup & Scaffolding
+Phase 1: Repo Setup & Scaffolding (LICENSE + repo already public/MIT)
    ↓
 Phase 2: Routing Shell + Static Host Config
    ↓
@@ -504,7 +505,7 @@ Content data files land in Phase 5, after the shell renders, so page structure i
 ### Detailed Phase Tasks
 
 #### Phase 1: Licensing, Repo Setup & Scaffolding
-- **Add `LICENSE`.** Non-negotiable and first. The site asserts "Open source, by default" (PRD §10), the footer carries a license notice, and PRD §16 requires an open-source identity — an open-source organization publishing a site with no license is a substantive credibility failure. Default to **MIT**; confirm with the organization in Phase 1 (see §10). Add a matching `license` field to `package.json` and a footer line naming the license.
+- **`LICENSE` is already done.** MIT, © 2026 KnowledgeAssembly, committed at the repo root and made public on 2026-10-05. The site asserts "Open source, by default" (PRD §10) and PRD §16 requires an open-source identity, so this was treated as a blocker rather than a nicety. Remaining Phase 1 licensing work: declare `"license": "MIT"` in `package.json`, and add the footer license line in Phase 4.
 - Initialize React 19 + TypeScript strict + Vite 7 workspace.
 - Install: `tailwindcss`, `@tailwindcss/vite`, `react-router-dom`. **No PostCSS, no autoprefixer** — the Vite plugin replaces it.
 - Install `@fontsource/ibm-plex-sans`, `@fontsource/jetbrains-mono` (self-hosted; no Google Fonts link).
@@ -575,7 +576,7 @@ Content data files land in Phase 5, after the shell renders, so page structure i
 - `npm run build` and `npx tsc --noEmit` — zero errors, zero warnings.
 - `npm run preview`, then re-verify all 5 routes plus a hard refresh on a deep link against the **production** build.
 - `rg -n 'https?://' src/` returns matches only in `src/config/links.ts`.
-- External link check: every URL in `LINKS` resolves. Use `curl -L` for the three public URLs and `gh api repos/…` for `githubRepo` while it is still private (§5.1).
+- External link check: every URL in `LINKS` resolves (HTTP 200/301). All four are public, so plain `curl -L` is sufficient — no authenticated checks needed (§5.1).
 - Confirm no console errors on any route.
 - Copy review against PRD §30 and §36: no SaaS language, no exaggerated claims, no manufactured scale/community/products.
 - Deploy to the chosen host and verify SPA rewrites work in production.
@@ -593,7 +594,9 @@ The final four items in the Technical block are carried over from PRD §32 and w
 - [ ] No fake metrics, fictional testimonials, or phantom SaaS features.
 
 ### Legal & Licensing
-- [ ] `LICENSE` file present at repo root, referenced in `package.json`, and named in the footer.
+- [x] `LICENSE` present at repo root (MIT, © 2026 KnowledgeAssembly).
+- [ ] `package.json` declares `"license": "MIT"` — Phase 1.
+- [ ] Footer names the license — Phase 4.
 - [ ] All external URLs in `LINKS` resolve (HTTP 200/301) and point at the correct `KnowledgeAssembly` repos per §11.2 — no invented domains, no `openedu.org`.
 
 ### Design Alignment
@@ -647,18 +650,20 @@ Reinforcing PRD §31: no accounts, auth, CMS, blog engine, comments, newsletter,
 
 | # | Question | Resolution |
 | :--- | :--- | :--- |
-| 1 | **External URLs** for the GitHub org, this repo, OpenEdu repo, and OpenEdu site | Verified against the live org. `github.com/KnowledgeAssembly`; this repo at `KnowledgeAssembly/knowledgeassemble-website`; OpenEdu at `KnowledgeAssembly/open-edu` with its Pages site at `knowledgeassembly.github.io/open-edu/`. The invented `openedu.org` domain was removed — it does not resolve. Recorded in §5.1. |
+| 1 | **External URLs** for the GitHub org, this repo, OpenEdu repo, and OpenEdu site | Verified against the live org. `github.com/KnowledgeAssembly`; this repo at `KnowledgeAssembly/knowledgeassemble.org`; OpenEdu at `KnowledgeAssembly/open-edu` with its Pages site at `knowledgeassembly.github.io/open-edu/`. The invented `openedu.org` domain was removed — it does not resolve. Recorded in §5.1. |
+| 2 | **License choice** | **MIT**, `LICENSE` committed at repo root (2026-10-05), copyright holder `KnowledgeAssembly`. Must be mirrored in `package.json` (`"license": "MIT"`) and named in the site footer (Phase 1, Phase 4). | Resolved |
+| 6 | **Website repo visibility** | **Public.** Confirms PRD §10 "open source, by default" and §16. The footer's GitHub CTA can point at `LINKS.githubRepo`. | Resolved |
 
 ### 10.2 Still Open — Must Resolve Before Phase 1 or 7
 
 | # | Question | Blocks | Default if unanswered |
 | :--- | :--- | :--- | :--- |
-| 2 | **License choice** (default MIT) | Phase 1 — `LICENSE`, footer, package metadata | Blocked — cannot start Phase 1 |
-| 3 | **Deployed origin** for `siteUrl` (e.g. `https://knowledgeassemble.org`) | Phase 7 — canonical URLs, `og:url` | Blocked — canonical cannot be absolute without it |
+| 3 | **Deployed origin** for `siteUrl`. Repo is named for `knowledgeassemble.org`, so the custom domain is the strong intent — but the domain must actually be registered and pointed at the chosen host before canonical URLs can be absolute. | Phase 7 — canonical URLs, `og:url` | Blocked — canonical cannot be absolute without it |
 | 4 | **Deploy target** (Vercel / Netlify / Cloudflare / GH Pages) | Phase 2 — which rewrite config in §4.4 | Blocked — deep links will 404 |
 | 5 | **Is CSR acceptable** given PRD §22 "do not make accessibility dependent on JavaScript"? (§4.2) | Phase 2 — whether V1 adds prerendering | Accept CSR + document; add `vite-plugin-ssg` if rejected |
-| 6 | **Website repo visibility.** Currently private. PRD §16 and §10 assert a public open-source identity, so the site must be able to link to its own source. | Phase 11 — whether the footer "GitHub" CTA points here or at the org | Confirm before going public |
 | 7 | Contact link in footer — include only if a real destination exists (PRD §11; do not invent an email) | Phase 4 — footer contents | Omit |
+
+Note on Q3: the repo rename to `knowledgeassemble.org` signals domain intent but does **not** prove the domain is registered. Confirm DNS/registration separately, and decide whether the canonical host is `knowledgeassemble.org` or `www.knowledgeassemble.org` — that choice must be applied consistently in `siteUrl`, canonical tags, and `og:url`.
 
 ---
 
@@ -669,7 +674,8 @@ Facts confirmed against the live `KnowledgeAssembly` GitHub org and `open-edu` r
 ### 11.1 Organization
 
 - Org `KnowledgeAssembly` (id `312102580`), created 2026-08-02. Brand spelling is `KnowledgeAssemble`; the GitHub handle is `KnowledgeAssembly`.
-- The website repo `knowledgeassemble-website` was created 2026-10-05 and is **private**.
+- The website repo `KnowledgeAssembly/knowledgeassemble.org` was created 2026-10-05, is **public**, and is **MIT-licensed**. It is named for the production domain `knowledgeassemble.org`, not for the brand spelling — the org (`KnowledgeAssembly`), the repo (`knowledgeassemble.org`), and the brand (`KnowledgeAssemble`) are three distinct strings.
+- Local clone directory is `knowledgeassemble.org`, matching the repo name. The path contains a dot, which is fine for Git and Vite but worth knowing when scripting.
 
 ### 11.2 OpenEdu Repos — Disambiguation Required
 
