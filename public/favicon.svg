@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="KnowledgeAssemble">
+  <rect width="32" height="32" rx="6" fill="#FBFBF9" />
+  <g fill="none" stroke="#164E63" stroke-width="2">
+    <rect x="3" y="3" width="11" height="11" rx="2" />
+    <rect x="18" y="3" width="11" height="11" rx="2" />
+    <rect x="10.5" y="18" width="11" height="11" rx="2" />
+    <path d="M8.5 14V16.5H16V18" stroke-linejoin="round" />
+    <path d="M23.5 14V16.5H16" stroke-linejoin="round" />
+  </g>
+</svg>

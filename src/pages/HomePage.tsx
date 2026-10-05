@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { LINKS } from '../config/links';
+import { defaultMeta } from '../config/site';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { projects } from '../content/projects';
 import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
@@ -33,7 +35,11 @@ const tenets = [
 
 const participantSegments = ['Educators', 'Developers', 'Researchers', 'Families', 'Contributors'];
 
+export const meta = defaultMeta;
+
 export default function HomePage() {
+  useDocumentMeta(meta);
+
   return (
     <>
       {/* Hero */}

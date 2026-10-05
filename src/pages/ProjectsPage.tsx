@@ -1,4 +1,6 @@
 import { LINKS } from '../config/links';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import type { PageMeta } from '../types';
 import { flagshipProject, projects } from '../content/projects';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
@@ -32,7 +34,16 @@ const umbrellaTree = `KnowledgeAssemble
 │
 └── Experiments`;
 
+export const meta: PageMeta = {
+  title: 'Projects — KnowledgeAssemble',
+  description:
+    'KnowledgeAssemble projects explore different parts of the knowledge ecosystem — from learning systems to interactive tools and experimental ideas.',
+  canonicalPath: '/projects',
+};
+
 export default function ProjectsPage() {
+  useDocumentMeta(meta);
+
   const otherProjects = projects.filter((project) => !project.isFlagship);
 
   return (
