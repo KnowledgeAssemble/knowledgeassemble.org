@@ -153,7 +153,7 @@ The Stitch mocks are **not** fully consistent with `DESIGN.md`. Build to `DESIGN
 - **Hero:** "Building open systems for assembling knowledge." + lead narrative + CTAs (`Explore projects` → `/projects`, `GitHub` → external link).
 - **Concept Section:** "Knowledge should be able to move." Static 6-step flow pipeline with clear explanations of decoupled knowledge.
 - **What We're Building:** 3 cards:
-  1. *OpenEdu* (Status: `Active`, Tags: Education, Open Source, Interactive Learning; links to OpenEdu).
+  1. *OpenEdu* (Status: `Active`, Tags: Education, Open Source, Interactive Learning; links to `LINKS.openedu`).
   2. *Knowledge Systems* (Status: `Exploring`, Tags: Formats, Graph, AST; links to `/projects`).
   3. *Experiments* (Status: `Ongoing`, Tags: Prototypes, Canvas; links to `/projects`).
 - **Principles Preview:** 4 key tenets (`Open`, `Composable`, `Accessible`, `Human + AI`) with link to `/principles`.
@@ -162,7 +162,7 @@ The Stitch mocks are **not** fully consistent with `DESIGN.md`. Build to `DESIGN
 
 #### 2. Projects (`/projects`)
 - **Header:** "Projects" + Framing narrative on exploring different facets of the knowledge ecosystem.
-- **Flagship Project:** Detailed spotlight on **OpenEdu** (context, architecture, active status, direct link).
+- **Flagship Project:** Detailed spotlight on **OpenEdu** — an open runtime for educational experiences that separates content from delivery platforms (§11.3). Active status, architecture notes, CTA to `LINKS.openedu` (repo) and `LINKS.openeduSite` (live demo).
 - **Knowledge Systems Section:** Structured exploration into decoupled formats, AST definitions, and graph engines.
 - **Experiments & Prototypes Section:** Small, agile explorations and proof-of-concepts.
 - **Umbrella Hierarchy Diagram:** Clear ASCII/SVG structural tree showing how KnowledgeAssemble hosts projects.
@@ -263,7 +263,7 @@ knowledgeassemble-website/
 │   └── 404.html                       # GitHub Pages SPA fallback (see §4.4)
 ├── src/
 │   ├── config/
-│   │   ├── links.ts                   # Centralized external URLs — ALL UNCONFIRMED, see §5.1
+│   │   ├── links.ts                   # Centralized external URLs (verified, see §5.1)
 │   │   └── site.ts                    # siteUrl, titles, descriptions, PageMeta
 │   ├── content/
 │   │   ├── projects.ts                # Project data & taxonomy
@@ -329,17 +329,30 @@ knowledgeassemble-website/
 
 ### 5.1 Link Registry (`src/config/links.ts`)
 
-**All four URLs below are unverified placeholders.** PRD §26: *"The actual KnowledgeAssemble GitHub/OpenEdu URLs should be confirmed from the project configuration rather than invented."* The previous draft presented invented values as final; `openedu.org` in particular is very likely an unrelated registered domain.
+URLs below were **verified against the live KnowledgeAssembly GitHub organization** and are no longer placeholders. PRD §26: *"The actual KnowledgeAssemble GitHub/OpenEdu URLs should be confirmed from the project configuration rather than invented."*
 
 ```typescript
 export const LINKS = {
-  // TODO(verify): confirm from project config before any copy ships. See §10.
-  githubOrg: "https://github.com/knowledgeassemble",                    // UNCONFIRMED
-  githubRepo: "https://github.com/knowledgeassemble/knowledgeassemble-website", // UNCONFIRMED
-  openedu: "https://github.com/knowledgeassemble/openedu",               // UNCONFIRMED
-  openeduSite: "https://openedu.org",                                     // UNCONFIRMED — do not trust this domain
+  // Verified against github.com/KnowledgeAssembly — see §10 Q1 (resolved).
+  githubOrg: "https://github.com/KnowledgeAssembly",
+  githubRepo: "https://github.com/KnowledgeAssembly/knowledgeassemble-website", // this repo (private)
+
+  // OpenEdu flagship. Repo is the canonical artifact; the Pages site is its
+  // published demo. Note the hyphen: the org has several similarly named
+  // repos (open-edu, open-edu-interactive, openedu-library, open-edu-pipeline).
+  openedu: "https://github.com/KnowledgeAssembly/open-edu",
+  openeduSite: "https://knowledgeassembly.github.io/open-edu/",
 } as const;
 ```
+
+**Correction from the previous draft.** It listed `github.com/knowledgeassemble` (lowercase, wrong owner — the real org is `KnowledgeAssembly`, capital A) and `openedu.org`. The `.org` domain does not resolve at all; it was an invented placeholder and has been removed. The canonical OpenEdu destination is the `open-edu` repository, with its GitHub Pages deployment as the public-facing site.
+
+**Org naming:** the GitHub org is `KnowledgeAssembly` while the brand is `KnowledgeAssemble`. This is not a typo — do not "correct" URLs to match the brand spelling.
+
+**`githubRepo` is currently private.** An unauthenticated `curl` returns 404, which is correct behavior, not a broken link. Two consequences:
+
+- It must be flipped to public before launch. PRD §10 asserts "open source, by default" and §16 requires an open-source identity; a site whose own footer links to an unreachable repository undercuts both. Tracked as §10 Q6.
+- Until then, verify it with an authenticated call (`gh api repos/KnowledgeAssembly/knowledgeassemble-website`) rather than a bare `curl`, so a privacy 404 is not mistaken for a typo.
 
 Every consumer imports from `LINKS`. A `rg -n 'https?://' src/` check in Phase 11 must return **zero** matches outside this file — PRD §26 forbids scattered URLs, and §8 makes it a Definition-of-Done item.
 
@@ -471,7 +484,7 @@ Phase 4: Layout Primitives — built on demand per page
    ├── Community Page                → yields CommunityCard
    └── About Page & Hierarchy Tree
    ↓
-Phase 5: Content Layer (TypeScript data files, verbatim from PRD)
+Phase 5: Content Layer (TypeScript data files, verbatim from PRD; links per §5.1)
    ↓
 Phase 6: Brand & Social Assets (favicon, OG image)
    ↓
@@ -521,7 +534,7 @@ Content data files land in Phase 5, after the shell renders, so page structure i
 - Extract `Button`, `Badge`, `ExternalLink`, `Logo`, `Section`, `SectionHeading`, and the card components **at the point each is first needed**. Do not pre-build.
 
 #### Phase 5: Content Layer
-- `src/config/links.ts` (§5.1 placeholders) and `src/config/site.ts` (incl. `siteUrl`).
+- `src/config/links.ts` using the verified URLs in §5.1 — no placeholders — and `src/config/site.ts` (incl. `siteUrl`, pending §10 Q3).
 - Populate `src/content/{projects,principles,community,about}.ts` from PRD copy **verbatim** — headings, intros, and CTAs are already written in PRD §5–15. No paraphrase, no invented metrics.
 - Verify every PRD heading string appears on the corresponding page.
 
@@ -562,7 +575,7 @@ Content data files land in Phase 5, after the shell renders, so page structure i
 - `npm run build` and `npx tsc --noEmit` — zero errors, zero warnings.
 - `npm run preview`, then re-verify all 5 routes plus a hard refresh on a deep link against the **production** build.
 - `rg -n 'https?://' src/` returns matches only in `src/config/links.ts`.
-- External link check: every URL in `LINKS` resolves (HTTP 200/301).
+- External link check: every URL in `LINKS` resolves. Use `curl -L` for the three public URLs and `gh api repos/…` for `githubRepo` while it is still private (§5.1).
 - Confirm no console errors on any route.
 - Copy review against PRD §30 and §36: no SaaS language, no exaggerated claims, no manufactured scale/community/products.
 - Deploy to the chosen host and verify SPA rewrites work in production.
@@ -579,9 +592,9 @@ The final four items in the Technical block are carried over from PRD §32 and w
 - [ ] OpenEdu correctly positioned as KnowledgeAssemble's first project.
 - [ ] No fake metrics, fictional testimonials, or phantom SaaS features.
 
-### Legal & Licensing *(new)*
+### Legal & Licensing
 - [ ] `LICENSE` file present at repo root, referenced in `package.json`, and named in the footer.
-- [ ] All external URLs in `LINKS` confirmed against real project configuration — no invented domains.
+- [ ] All external URLs in `LINKS` resolve (HTTP 200/301) and point at the correct `KnowledgeAssembly` repos per §11.2 — no invented domains, no `openedu.org`.
 
 ### Design Alignment
 - [ ] Warm paper canvas (`#FBFBF9`), charcoal ink (`#1C1F23`), mineral accents (`#164E63`, `#2D5A46`).
@@ -628,13 +641,72 @@ Reinforcing PRD §31: no accounts, auth, CMS, blog engine, comments, newsletter,
 
 ---
 
-## 10. Open Questions — Must Resolve Before Phase 5
+## 10. Open Questions
 
-| # | Question | Impact | Default if unanswered |
+### 10.1 Resolved
+
+| # | Question | Resolution |
+| :--- | :--- | :--- |
+| 1 | **External URLs** for the GitHub org, this repo, OpenEdu repo, and OpenEdu site | Verified against the live org. `github.com/KnowledgeAssembly`; this repo at `KnowledgeAssembly/knowledgeassemble-website`; OpenEdu at `KnowledgeAssembly/open-edu` with its Pages site at `knowledgeassembly.github.io/open-edu/`. The invented `openedu.org` domain was removed — it does not resolve. Recorded in §5.1. |
+
+### 10.2 Still Open — Must Resolve Before Phase 1 or 7
+
+| # | Question | Blocks | Default if unanswered |
 | :--- | :--- | :--- | :--- |
-| 1 | **Real URLs** for the GitHub org, this repo, OpenEdu repo, and OpenEdu site | Every external CTA. `openedu.org` placeholder is likely wrong. | Blocked — do not ship copy |
-| 2 | **License choice** (default MIT) | `LICENSE`, footer, package metadata | Blocked — Phase 1 |
-| 3 | **Deployed origin** for `siteUrl` | Canonical URLs, `og:url`, sitemap | Blocked — Phase 7 |
-| 4 | **Deploy target** (Vercel / Netlify / Cloudflare / GH Pages) | Which rewrite config in §4.4 | Blocked — Phase 2 |
-| 5 | **Is CSR acceptable** given PRD §22 "do not make accessibility dependent on JavaScript"? (§4.2) | Whether V1 adds prerendering | Accept CSR + document; add `vite-plugin-ssg` if rejected |
-| 6 | Contact link in footer — include only if a real destination exists (PRD §11; do not invent an email) | Footer contents | Omit |
+| 2 | **License choice** (default MIT) | Phase 1 — `LICENSE`, footer, package metadata | Blocked — cannot start Phase 1 |
+| 3 | **Deployed origin** for `siteUrl` (e.g. `https://knowledgeassemble.org`) | Phase 7 — canonical URLs, `og:url` | Blocked — canonical cannot be absolute without it |
+| 4 | **Deploy target** (Vercel / Netlify / Cloudflare / GH Pages) | Phase 2 — which rewrite config in §4.4 | Blocked — deep links will 404 |
+| 5 | **Is CSR acceptable** given PRD §22 "do not make accessibility dependent on JavaScript"? (§4.2) | Phase 2 — whether V1 adds prerendering | Accept CSR + document; add `vite-plugin-ssg` if rejected |
+| 6 | **Website repo visibility.** Currently private. PRD §16 and §10 assert a public open-source identity, so the site must be able to link to its own source. | Phase 11 — whether the footer "GitHub" CTA points here or at the org | Confirm before going public |
+| 7 | Contact link in footer — include only if a real destination exists (PRD §11; do not invent an email) | Phase 4 — footer contents | Omit |
+
+---
+
+## 11. Verified External Context
+
+Facts confirmed against the live `KnowledgeAssembly` GitHub org and `open-edu` repository. Recorded so later phases do not re-derive or re-guess them.
+
+### 11.1 Organization
+
+- Org `KnowledgeAssembly` (id `312102580`), created 2026-08-02. Brand spelling is `KnowledgeAssemble`; the GitHub handle is `KnowledgeAssembly`.
+- The website repo `knowledgeassemble-website` was created 2026-10-05 and is **private**.
+
+### 11.2 OpenEdu Repos — Disambiguation Required
+
+The org contains several similarly named repositories. `open-edu` is the flagship framework; the others are adjacent projects and must **not** be linked from the site.
+
+| Repo | Visibility | Description | Use on site |
+| :--- | :--- | :--- | :--- |
+| `KnowledgeAssembly/open-edu` | public | Open-Edu Framework: an open runtime for portable, accessible educational experiences | **Yes — this is OpenEdu** |
+| `KnowledgeAssembly/open-edu-interactive` | public | (no description) | No |
+| `KnowledgeAssembly/openedu-library` | public | (no description) | No |
+| `KnowledgeAssembly/open-edu-pipeline` | public | (no description) | No |
+| `KnowledgeAssembly/openedu-geo-assets` | private | India Geo Assets pipeline: topojson boundary/point/river/lake assets | No |
+
+The name contains a **hyphen** (`open-edu`). The previous draft's `openedu` (no hyphen) did not exist.
+
+### 11.3 OpenEdu Facts Usable as Accurate Copy
+
+Verified from the `open-edu` README, so site copy describes the real project:
+
+- **Positioning:** "An open runtime for educational experiences that separates content from delivery platforms." This is the same decoupling thesis as PRD §15, so `/about` and `/projects` can reference it truthfully.
+- **Format:** Learning packages are Markdown + JSON, validated and rendered through a configurable runtime, distributed as `.oep` files.
+- **Accessibility:** Built-in accessibility and telemetry are part of the runtime, supporting PRD §13.5 (accessibility as foundational) with a real example.
+- **Live demo:** `https://knowledgeassembly.github.io/open-edu/` returns HTTP 200 — verified suitable as the `openeduSite` CTA target.
+
+Do **not** claim OpenEdu features the repo does not have, and do not describe it as a product with users or scale (PRD §36: do not manufacture products, community, or scale).
+
+### 11.4 OpenEdu Design System — Deliberate Divergence
+
+`open-edu/DESIGN.md` is a **different** system from the `assembled_knowledge_framework/DESIGN.md` used by this site:
+
+| | OpenEdu runtime | This site |
+| :--- | :--- | :--- |
+| Typeface | Inter | IBM Plex Sans + JetBrains Mono |
+| Background | `#ffffff` | `#FBFBF9` |
+| Structure | Material-derived purple/blue (`#6750a4` tertiary) | Archival charcoal + mineral accents |
+| Themes | 3 (Light, Dark, Zen) | 1 (light only) |
+
+PRD §16 requires the site to feel "related to OpenEdu but not identical." **Do not inherit OpenEdu's tokens.** This site uses `assembled_knowledge_framework/DESIGN.md` per §2. The relationship is conceptual — shared decoupling thesis and accessibility commitment — not visual.
+
+Note also that OpenEdu's stack is React 18 / Vite 5 / Tailwind 3 / pnpm (§4.1 of its `AGENTS.md`), while this plan pins React 19 / Vite 7 / Tailwind 4 (§4.1). That divergence is intentional: the website is standalone and follows current majors. If shared components are ever needed across the two, revisit.
