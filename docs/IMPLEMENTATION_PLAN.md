@@ -229,7 +229,7 @@ PRD §22 states: *"Do not make accessibility dependent on JavaScript."* A React 
 
 Five client-rendered routes need distinct `<title>`, meta description, canonical, and OpenGraph tags. Implementation:
 
-- `src/config/site.ts` exports `siteUrl` (the deployed origin, e.g. `https://knowledgeassemble.org`) — **required**, since canonical and `og:url` must be absolute.
+- `src/config/site.ts` exports `siteUrl` (the deployed origin) — **required**, since canonical and `og:url` must be absolute. Note that `knowledgeassemble.org` is **not yet registered** (§10 Q3); until it is, use a temporary host or defer canonical wiring to Phase 7.
 - Each route exports `const meta: PageMeta = { title, description, canonicalPath }` from its page module.
 - A small `useDocumentMeta(meta)` hook (`src/hooks/useDocumentMeta.ts`, ~30 lines, no dependency) sets `document.title`, `meta[name=description]`, `link[rel=canonical]`, and the `og:` / `twitter:` tags on mount and cleans up on unmount.
 - Default OG tags, `og:image` (`/og-image.png`), favicon, and theme-color live in `index.html` as static fallbacks.
@@ -245,7 +245,7 @@ Without a rewrite rule, a direct request to `/principles` returns 404 on Vercel,
 | Vercel | `vercel.json` | `{"rewrites": [{"source": "/(.*)", "destination": "/index.html"}]}` |
 | GitHub Pages | `public/404.html` | Redirect script to `/`, preserving the path |
 
-Deploy target is not yet chosen (§10). Whichever is selected, its config file ships in Phase 3 and is verified in Phase 11.
+Deploy target is not yet chosen (§10 Q4). All the primary options offer a free tier and custom-domain support, so this decision can follow domain registration rather than gate it. Whichever is selected, its config file ships in Phase 2 and is verified in Phase 11.
 
 ### 4.5 Workspace File Structure
 
@@ -353,7 +353,9 @@ export const LINKS = {
 
 **This repository is public and MIT-licensed.** The repo is named `knowledgeassemble.org` to match the production domain, so `gh api repos/KnowledgeAssembly/knowledgeassemble.org` and a bare `curl` both return 200. License and visibility questions are closed (§10 Q2, Q6).
 
-**The repo name is a URL, not a typo.** It matches the intended production domain `knowledgeassemble.org` (§10 Q3). Do not "normalize" it to `knowledgeassemble-website`. Note that the repo name, the GitHub org (`KnowledgeAssembly`), and the brand (`KnowledgeAssemble`) are three distinct strings — verify each against this registry rather than assuming they match.
+**The repo name is a URL, not a typo.** It expresses intent for the production domain `knowledgeassemble.org`, which is **not yet registered** (§10 Q3). Do not "normalize" it to `knowledgeassemble-website`, and do not ship canonical tags pointing at the unregistered domain. Note that the repo name, the GitHub org (`KnowledgeAssembly`), and the brand (`KnowledgeAssemble`) are three distinct strings — verify each against this registry rather than assuming they match.
+
+**`LINKS` contains no self-link.** `githubRepo` is the repository; the deployed site URL is a separate concern owned by `siteUrl` (§4.3), since it is unresolved until the domain is registered. Do not add a `site` entry to `LINKS` that duplicates it.
 
 Every consumer imports from `LINKS`. A `rg -n 'https?://' src/` check in Phase 11 must return **zero** matches outside this file — PRD §26 forbids scattered URLs, and §8 makes it a Definition-of-Done item.
 
@@ -658,12 +660,24 @@ Reinforcing PRD §31: no accounts, auth, CMS, blog engine, comments, newsletter,
 
 | # | Question | Blocks | Default if unanswered |
 | :--- | :--- | :--- | :--- |
-| 3 | **Deployed origin** for `siteUrl`. Repo is named for `knowledgeassemble.org`, so the custom domain is the strong intent — but the domain must actually be registered and pointed at the chosen host before canonical URLs can be absolute. | Phase 7 — canonical URLs, `og:url` | Blocked — canonical cannot be absolute without it |
+| 3 | **Domain registration + deployed origin** for `siteUrl`. Confirmed 2026-10-05: `knowledgeassemble.org` is **not registered** — `whois` returns "Domain not found" and there are no A/NS/SOA records. Registering it is an organizational purchase decision, not a build step. | Phase 7 — canonical URLs, `og:url` | Blocked — canonical cannot be absolute without it |
 | 4 | **Deploy target** (Vercel / Netlify / Cloudflare / GH Pages) | Phase 2 — which rewrite config in §4.4 | Blocked — deep links will 404 |
 | 5 | **Is CSR acceptable** given PRD §22 "do not make accessibility dependent on JavaScript"? (§4.2) | Phase 2 — whether V1 adds prerendering | Accept CSR + document; add `vite-plugin-ssg` if rejected |
 | 7 | Contact link in footer — include only if a real destination exists (PRD §11; do not invent an email) | Phase 4 — footer contents | Omit |
 
-Note on Q3: the repo rename to `knowledgeassemble.org` signals domain intent but does **not** prove the domain is registered. Confirm DNS/registration separately, and decide whether the canonical host is `knowledgeassemble.org` or `www.knowledgeassemble.org` — that choice must be applied consistently in `siteUrl`, canonical tags, and `og:url`.
+**Note on Q3 — the domain does not exist yet.** Verified 2026-10-05: `whois knowledgeassemble.org` returns "Domain not found", and `knowledgeassemble.org`, `www.knowledgeassemble.org`, and `knowledgeassembly.org` all have zero DNS records. The repo is named for a domain the organization does not yet control.
+
+This does not block Phases 1–6. It becomes blocking at Phase 7, and it is not a code task — registering the domain is a purchase and ownership decision. Consequences to plan around:
+
+- **Phases 1–6 proceed normally.** Set `siteUrl` to a temporary placeholder (e.g. `https://knowledgeassembly.github.io/knowledgeassemble.org/`) if an absolute URL is needed for early testing, and never ship canonical tags pointing at an unregistered host.
+- **Two hosting paths, different costs:**
+  - **GitHub Pages** — free, but the site lives at `knowledgeassembly.github.io/knowledgeassemble.org/` and `knowledgeassemble.org` must be added later as a custom domain.
+  - **Vercel / Netlify / Cloudflare** — free tier, and can attach a custom domain immediately once registered. All support the SPA rewrites in §4.4.
+- **Sequencing matters.** Register the domain *before* choosing the host (§10 Q4) if the host is meant to serve it, since some hosts make custom-domain setup much easier on first connect.
+- **Decide apex vs `www`** before Phase 7 and apply it consistently in `siteUrl`, canonical tags, `og:url`, and the sitemap. Set the other as a 301 redirect, never both as canonical.
+- **HTTPS is handled by the host** via automatic certificates; there is no certificate work to do in this repo.
+
+The repo name may keep `knowledgeassemble.org` regardless — it expresses intent and GitHub redirects if renamed later.
 
 ---
 
