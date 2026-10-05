@@ -1,7 +1,19 @@
 import Button from '../components/common/Button';
 import PageContainer from '../components/layout/PageContainer';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import type { PageMeta } from '../types';
+
+export const meta: PageMeta = {
+  title: 'Page not found — KnowledgeAssemble',
+  description:
+    'The page you requested does not exist or has moved. Head back to the homepage, or browse our principles and projects to find what you were looking for.',
+  canonicalPath: '',
+  noIndex: true,
+};
 
 export default function NotFoundPage() {
+  useDocumentMeta(meta);
+
   return (
     <section className="py-24 sm:py-32">
       <PageContainer>

@@ -1,9 +1,18 @@
 import { LINKS } from '../config/links';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import type { PageMeta } from '../types';
 import { communityTracks } from '../content/community';
 import Button from '../components/common/Button';
 import Section from '../components/common/Section';
 import PageContainer from '../components/layout/PageContainer';
 import CommunityCard from '../components/sections/CommunityCard';
+
+export const meta: PageMeta = {
+  title: 'Community — KnowledgeAssemble',
+  description:
+    "KnowledgeAssemble is an open project. You don't need to be a developer to contribute — educators, researchers, families, and contributors are welcome.",
+  canonicalPath: '/community',
+};
 
 const channels = [
   {
@@ -21,6 +30,8 @@ const channels = [
 ] as const;
 
 export default function CommunityPage() {
+  useDocumentMeta(meta);
+
   return (
     <>
       <section className="pt-16 pb-10 sm:pt-20 sm:pb-12">

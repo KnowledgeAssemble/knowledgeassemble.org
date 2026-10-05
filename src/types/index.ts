@@ -33,4 +33,5 @@ export interface PageMeta {
   title: string; // "Principles — KnowledgeAssemble"
   description: string; // 120–160 chars, from PRD copy
   canonicalPath: string; // "/principles" — resolved to absolute via site.siteUrl
+  noIndex?: boolean; // robots noindex — the SPA rewrite serves 404 routes as 200
 }

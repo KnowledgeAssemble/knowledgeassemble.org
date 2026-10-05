@@ -21,17 +21,21 @@ like errors otherwise.
 
 ## Current state
 
-Phases 1–4 are committed. `src/App.tsx` routes the five pages plus a not-found
+Phases 1–7 are committed. `src/App.tsx` routes the five pages plus a not-found
 route through a `RootLayout` that renders `SkipLink`, `SiteHeader`, `<main>`,
 and `SiteFooter`. Pages are built on the design tokens in
 `src/styles/index.css` (imported from `src/main.tsx`); content lives in
-`src/content/` and external URLs in `src/config/links.ts`. React replaces
-`#root`'s children, so the hydrated page — not the static shell in `index.html`
-— provides the landmarks.
+`src/content/`, external URLs in `src/config/links.ts`, and site metadata in
+`src/config/site.ts`. Each page module exports `meta` and calls
+`useDocumentMeta`, which sets title, description, and OpenGraph/Twitter tags.
 
-Phase 5 (content layer) is next. A first cut of the content already exists
-because the Phase 4 pages required it; Phase 5 should complete it and verify
-every PRD heading string against the pages.
+`siteUrl` in `src/config/site.ts` is deliberately empty because
+`knowledgeassemble.org` is unregistered (§10 Q3). Canonical and `og:url` are
+therefore not emitted yet; set `siteUrl` to the deployed origin to enable them
+in one place. Brand assets (`public/favicon.svg`, `public/og-image.png`,
+`public/robots.txt`) are in place.
+
+Phase 8 (accessibility audit) is next.
 
 Stack is pinned in plan §4.1: **React 19 + Vite 7 + TypeScript strict +
 Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.ts`, no PostCSS) +

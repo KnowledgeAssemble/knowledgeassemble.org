@@ -1,8 +1,17 @@
 import { LINKS } from '../config/links';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import type { PageMeta } from '../types';
 import { about } from '../content/about';
 import Button from '../components/common/Button';
 import Section from '../components/common/Section';
 import PageContainer from '../components/layout/PageContainer';
+
+export const meta: PageMeta = {
+  title: 'About — KnowledgeAssemble',
+  description:
+    'We are exploring what it could look like if knowledge were easier to create, connect, explore, and share, starting with OpenEdu in education.',
+  canonicalPath: '/about',
+};
 
 const umbrellaTree = `KnowledgeAssemble
 │
@@ -13,6 +22,8 @@ const umbrellaTree = `KnowledgeAssemble
 └── Experiments`;
 
 export default function AboutPage() {
+  useDocumentMeta(meta);
+
   return (
     <>
       <section className="pt-16 pb-10 sm:pt-20 sm:pb-12">

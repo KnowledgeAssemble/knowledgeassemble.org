@@ -1,9 +1,20 @@
 import { principles } from '../content/principles';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import type { PageMeta } from '../types';
 import Section from '../components/common/Section';
 import PageContainer from '../components/layout/PageContainer';
 import PrincipleCard from '../components/sections/PrincipleCard';
 
+export const meta: PageMeta = {
+  title: 'Principles — KnowledgeAssemble',
+  description:
+    'KnowledgeAssemble is guided by a small set of principles describing how we think about technology, knowledge, and the people who use it.',
+  canonicalPath: '/principles',
+};
+
 export default function PrinciplesPage() {
+  useDocumentMeta(meta);
+
   return (
     <>
       <section className="pt-16 pb-10 sm:pt-20 sm:pb-12">
