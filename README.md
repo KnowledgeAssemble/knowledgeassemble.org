@@ -45,7 +45,9 @@ Domain registration (plan §10 Q3) blocks canonical and `og:url` wiring in Phase
 
 PRD §22 states: *"Do not make accessibility dependent on JavaScript."* A React SPA with client-side routing cannot satisfy that — without JavaScript, route content is unavailable.
 
-**V1 accepts client-side rendering as a documented deviation** (plan §4.2, §10 Q5). It mitigates rather than solves the problem: `index.html` ships a real semantic shell — `<header>`, `<nav>`, `<main id="main-content">`, `<footer>` — plus a `<noscript>` block that explains the requirement and links to the [GitHub organization](https://github.com/KnowledgeAssembly), so the document has valid landmarks and a route out before hydration. Route content is deliberately not duplicated into `index.html`, which would create a second source of truth that drifts.
+**V1 accepts client-side rendering as a documented deviation** (plan §4.2, §10 Q5). It mitigates rather than solves the problem: `index.html` ships a real semantic shell — `<header>`, `<nav>`, `<main id="main-content">`, `<footer>` — inside a `<noscript>` block, alongside a short explanation of the requirement and a link to the [GitHub organization](https://github.com/KnowledgeAssembly), so the document has valid landmarks and a route out. Route content is deliberately not duplicated into `index.html`, which would create a second source of truth that drifts.
+
+The shell lives inside `<noscript>` rather than in the `<body>`, which is what makes it work for both audiences. A visitor with JavaScript never renders it: the shell has no layout rules of its own — the real header and footer get theirs from Tailwind utilities on the React components — so rendering it in the body paints bare markup in the top-left corner until hydration completes. A visitor without JavaScript renders nothing else, so for them the shell is the whole document. `#root` ships empty and React fills it.
 
 If full no-JavaScript parity is required for V1, the remedy is to add `vite-plugin-ssg` and prerender all five routes. That also resolves plan §4.3 and is the recommended path if the deviation is rejected.
 
