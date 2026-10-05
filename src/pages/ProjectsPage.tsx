@@ -92,7 +92,9 @@ export default function ProjectsPage() {
         </Section>
       ) : null}
 
-      {/* Other projects */}
+      {/* Other projects. `hideCta` because these cards are already on the page
+          their internal CTA points at — a "Learn more" link to /projects here
+          would go nowhere. */}
       <Section
         eyebrow="Also underway"
         title="Knowledge Systems and Experiments"
@@ -100,7 +102,7 @@ export default function ProjectsPage() {
         contentClassName="mt-10 grid gap-6 md:grid-cols-2"
       >
         {otherProjects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
+          <ProjectCard key={project.id} project={project} hideCta />
         ))}
       </Section>
 

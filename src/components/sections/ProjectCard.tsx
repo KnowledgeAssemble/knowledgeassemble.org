@@ -7,6 +7,12 @@ import { ArrowRight } from '../common/icons';
 type ProjectCardProps = {
   project: ProjectItem;
   ctaLabel?: string;
+  /**
+   * Suppress the call to action. Set this when the card is rendered on the page
+   * the CTA would point at — a "Learn more" link to `/projects` shown on
+   * `/projects` is a dead end.
+   */
+  hideCta?: boolean;
 };
 
 const statusVariant: Record<ProjectStatus, 'neutral' | 'verified'> = {
@@ -20,9 +26,10 @@ const statusVariant: Record<ProjectStatus, 'neutral' | 'verified'> = {
  * interactive; a single link carries the action, so there is no nested
  * interactive content.
  */
-export default function ProjectCard({ project, ctaLabel }: ProjectCardProps) {
+export default function ProjectCard({ project, ctaLabel, hideCta = false }: ProjectCardProps) {
   const externalLabel = ctaLabel ?? `Explore ${project.name}`;
   const internalLabel = ctaLabel ?? 'Learn more';
+  const externalUrl = project.externalUrl;
 
   return (
     <article className="flex h-full flex-col justify-between rounded-panel border border-rule bg-surface p-6 transition-colors hover:border-rule-interactive">
@@ -48,21 +55,23 @@ export default function ProjectCard({ project, ctaLabel }: ProjectCardProps) {
         </ul>
       </div>
 
-      <div className="mt-6 border-t border-rule pt-5">
-        {project.externalUrl ? (
-          <ExternalLink href={project.externalUrl} className="text-body-md">
-            {externalLabel}
-          </ExternalLink>
-        ) : (
-          <Link
-            to="/projects"
-            className="focus-ring inline-flex min-h-11 items-center gap-1.5 rounded-control text-body-md font-medium text-accent transition-colors hover:text-accent-hover"
-          >
-            <span>{internalLabel}</span>
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        )}
-      </div>
+      {hideCta ? null : (
+        <div className="mt-6 border-t border-rule pt-5">
+          {externalUrl ? (
+            <ExternalLink href={externalUrl} className="text-body-md">
+              {externalLabel}
+            </ExternalLink>
+          ) : (
+            <Link
+              to="/projects"
+              className="focus-ring inline-flex min-h-11 items-center gap-1.5 rounded-control text-body-md font-medium text-accent transition-colors hover:text-accent-hover"
+            >
+              <span>{internalLabel}</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
+        </div>
+      )}
     </article>
   );
 }
