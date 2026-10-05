@@ -3,79 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KnowledgeAssemble — Open Systems for Knowledge</title>
-    <meta
-      name="description"
-      content="KnowledgeAssemble builds open-source tools and systems for creating, connecting, exploring, and sharing knowledge."
-    />
+    <title>KnowledgeAssemble</title>
     <meta name="theme-color" content="#FBFBF9" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-
-    <!-- Static OpenGraph/Twitter fallbacks. Absolute URLs because crawlers
-         require an origin; the per-route canonical and og:url are wired by
-         useDocumentMeta at runtime. -->
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="KnowledgeAssemble" />
-    <meta property="og:title" content="KnowledgeAssemble — Open Systems for Knowledge" />
-    <meta
-      property="og:description"
-      content="KnowledgeAssemble builds open-source tools and systems for creating, connecting, exploring, and sharing knowledge."
-    />
-    <meta property="og:image" content="https://knowledgeassemble.org/og-image.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="KnowledgeAssemble — Open Systems for Knowledge" />
-    <meta
-      name="twitter:description"
-      content="KnowledgeAssemble builds open-source tools and systems for creating, connecting, exploring, and sharing knowledge."
-    />
-    <meta name="twitter:image" content="https://knowledgeassemble.org/og-image.png" />
   </head>
   <body>
-    <!--
-      Empty on purpose. React mounts into #root; anything visible here paints
-      unstyled first, because the shell below has no layout rules of its own and
-      the real header/footer get theirs from Tailwind utilities on the React
-      components. A bare <header><h1> stacking in the top-left corner for the
-      ~70ms before hydration is the flash; this div is what prevents it.
-
-      With JavaScript enabled, <noscript> below is not rendered at all.
-    -->
     <div id="root"></div>
-
-    <!--
-      The §4.2 no-JS mitigation (PRD §22: do not make accessibility dependent on
-      JavaScript). Without JS there is no app, so this is the whole document:
-      real landmarks, working navigation to the static routes, and a pointer to
-      GitHub for anything not reachable this way.
-
-      It lives inside <noscript> rather than in the body so that JS users never
-      see it. Those users get the shell's content from React a few tens of
-      milliseconds later, correctly styled; no-JS users get exactly the same
-      markup, permanently.
-    -->
-    <noscript>
-      <header>
-        <a href="/">KnowledgeAssemble</a>
-        <nav aria-label="Primary">
-          <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/projects">Projects</a></li>
-            <li><a href="/principles">Principles</a></li>
-            <li><a href="/community">Community</a></li>
-            <li><a href="/about">About</a></li>
-          </ul>
-        </nav>
-      </header>
-      <main id="main-content">
-        <h1>KnowledgeAssemble</h1>
-        <p>This site is a JavaScript application, so its pages need JavaScript enabled.</p>
-        <p>You can browse our work on <a href="https://github.com/KnowledgeAssembly">GitHub</a> instead.</p>
-      </main>
-      <footer>
-        <p>KnowledgeAssemble</p>
-      </footer>
-    </noscript>
-
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

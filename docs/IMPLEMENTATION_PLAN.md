@@ -209,43 +209,44 @@ Pinned to current majors. Versions are exact and must not drift silently.
 - **Fonts:** `@fontsource/ibm-plex-sans`, `@fontsource/jetbrains-mono` (self-hosted, bundled)
 - **Icons:** Inline accessible SVGs (matching the prototypes' assembly blocks and directional arrows)
 
-**Why `react-router-dom` v7 rather than `wouter`:** V7 is the current major (v6 is unmaintained). It ships `ScrollRestoration`, `NavLink` with `aria-current` built in, and `StaticRouter` — so if V2 moves to prerendering (§4.3), no routing rewrite is needed. `wouter` is ~1kB lighter, which is not worth giving up declarative data routers and future prerender compatibility for a 5-page static site.
+**Why `react-router-dom` v7 rather than `wouter`:** V7 is the current major (v6 is unmaintained). It ships `ScrollRestoration`, `NavLink` with `aria-current` built in, and `StaticRouter` — which is why prerendering (§4.2) needed no routing rewrite. `wouter` is ~1kB lighter, which is not worth giving up declarative data routers and static-render compatibility for a 5-page static site.
 
 **Why Tailwind v4 rather than v3:** v4 is CSS-first. Design tokens live in `@theme` in `src/styles/index.css`, which is the single source of truth required by §2.2. There is **no `tailwind.config.ts`** in this project; the previous draft's file tree and Phase 1 task are superseded. The Vite plugin replaces the PostCSS pipeline, so no `postcss.config.js` is needed either.
 
-### 4.2 Rendering Strategy — Accepted Trade-off (Decision Required)
+### 4.2 Rendering Strategy — Prerendered, Then Enhanced
 
-PRD §22 states: *"Do not make accessibility dependent on JavaScript."* A React SPA with client-side routing necessarily fails that requirement — with JS disabled, every route renders an empty shell.
+PRD §22 states: *"Do not make accessibility dependent on JavaScript."* The site satisfies this by **prerendering all five canonical routes to static HTML at build time** (gap closure §4, §36). The build pipeline is:
 
-**Decision: V1 accepts client-side rendering** and mitigates rather than solves:
+```text
+vite build                  → dist/index.html + hashed assets
+vite build --ssr …          → dist-ssr/prerender.js (the renderer)
+node dist-ssr/prerender.js  → writes dist/index.html and dist/{route}/index.html
+```
 
-1. `index.html` contains real, semantic static shell markup (`<header>`, `<main>`, `<nav>`, `<footer>`) plus the brand, inside a `<noscript>` block that also explains the site requires JavaScript and links to the GitHub organization. Scoping the shell to `<noscript>` is what keeps it from painting unstyled for visitors who do have JavaScript — see §6.2.
-2. Route content is not duplicated into `index.html` (avoiding a second source of truth that would drift).
-3. This limitation is recorded in the repo `README.md` and tracked for V2, where `react-router-dom`'s `StaticRouter` makes prerendering the 5 static routes straightforward.
+`src/routes.tsx` is the single source of truth for both the route table and the `prerenderEntries` list; `scripts/prerender.tsx` renders each entry with `react-router-dom`'s `createStaticHandler` / `createStaticRouter` and `renderToStaticMarkup`.
 
-**This is a conscious deviation from PRD §22 and should be signed off before build.** If full no-JS parity is required for V1, the mitigation is to add `vite-plugin-ssg` and prerender all 5 routes — this also resolves §4.3 entirely. That is the recommended path if the deviation is unacceptable.
+Client-side rendering is retained as the enhancement layer: `src/main.tsx` still calls `createRoot(...).render(<App/>)`, which re-renders the already-present markup and attaches interactivity. `renderToStaticMarkup` is markers-free, so `createRoot` is the correct pairing — not `hydrateRoot`. `index.html` is a minimal Vite template with an empty `#root`; the prerender overwrites it for the homepage.
 
 ### 4.3 SEO Metadata Strategy
 
-Five client-rendered routes need distinct `<title>`, meta description, canonical, and OpenGraph tags. Implementation:
+Each route needs distinct `<title>`, meta description, canonical, and OpenGraph tags, present in the **served HTML** (gap closure §5, §6):
 
-- `src/config/site.ts` exports `siteUrl`, **now set to the live apex origin `https://knowledgeassemble.org`** (§10 Q3 resolved). Canonical and `og:url` are therefore absolute on every route.
-- Each route exports `const meta: PageMeta = { title, description, canonicalPath }` from its page module.
-- A small `useDocumentMeta(meta)` hook (`src/hooks/useDocumentMeta.ts`, ~30 lines, no dependency) sets `document.title`, `meta[name=description]`, `link[rel=canonical]`, and the `og:` / `twitter:` tags on mount and cleans up on unmount.
-- Default OG tags, `og:image` (`/og-image.png`), favicon, and theme-color live in `index.html` as static fallbacks.
-- **Acknowledged limitation:** crawlers that do not execute JS see only the homepage metadata. This is accepted for V1 under §4.2 and is the strongest argument for prerendering in V2.
+- `src/config/site.ts` exports `siteUrl`, set to the live apex `https://knowledgeassemble.org` (§10 Q3 resolved).
+- Each page module exports `const meta: PageMeta = { title, description, canonicalPath }`. The prerender reads it and writes the tags into that route's HTML; `useDocumentMeta` reads the same object for SPA navigation. There is one source of truth, not two.
+- `scripts/prerender.tsx` emits title, description, canonical, `og:*`, and `twitter:*` with absolute URLs into each generated page.
+- Route-independent fallbacks (favicon, theme-color) live in `index.html`; the OpenGraph/Twitter tags are route-specific and generated per page.
+- Canonical and `og:url` are emitted only when `siteUrl` is set and the route has a `canonicalPath`. The not-found route sets `''` and is `noindex`.
 
 ### 4.4 Static Host Routing Configuration
 
-Without a rewrite rule, a direct request to `/principles` returns 404 on Vercel, Netlify, Cloudflare Pages, and GitHub Pages. Required config, committed to the repo:
+The five canonical routes are prerendered to `dist/{route}/index.html`, so a direct request to `/principles` serves real HTML with no rewrite. The deploy uses Vercel's static hosting:
 
-| Host | File | Contents |
+| Host | Config | Behavior |
 | :--- | :--- | :--- |
-| Netlify / Cloudflare Pages | `public/_redirects` | `/*  /index.html  200` |
-| Vercel | `vercel.json` | `{"rewrites": [{"source": "/(.*)", "destination": "/index.html"}]}` |
-| GitHub Pages | `public/404.html` | Redirect script to `/`, preserving the path |
+| Vercel | `vercel.json` | `cleanUrls: true`, `trailingSlash: false` — `/principles` serves the prerendered file |
+| Static 404 | `dist/404.html` (generated by `scripts/prerender.tsx`) | Served for unknown paths; `noindex`, no canonical |
 
-**Deploy target is Vercel**, decided 2026-10-05 (§10 Q4). `vercel.json` is committed and carries the rewrite rule. The other rows remain documented because a host change requires migrating the rule — a `vercel.json` left on a Netlify or GitHub Pages deploy means deep links silently 404. Vercel is verified in Phase 11.
+**Deploy target is Vercel** (§10 Q4). The previous SPA rewrite was removed in the gap-closure pass; a rewrite left in place would serve the homepage for every route and defeat the prerender. If the host changes, `cleanUrls` + static-404 behavior must be reproduced.
 
 ### 4.5 Workspace File Structure
 
@@ -256,9 +257,13 @@ knowledgeassemble.org/
 │   ├── IMPLEMENTATION_PLAN.md
 │   └── stitch_knowledgeassemble_website_v1/
 ├── public/
+│   ├── 404.html                       # Static noindex 404 (§4.4)
 │   ├── favicon.svg
 │   ├── og-image.png
-│   └── robots.txt
+│   ├── robots.txt
+│   └── sitemap.xml
+├── scripts/
+│   └── prerender.tsx                  # Static renderer for the five routes (§4.2)
 ├── src/
 │   ├── config/
 │   │   ├── links.ts                   # Centralized external URLs (verified, see §5.1)
@@ -300,7 +305,8 @@ knowledgeassemble.org/
 │   │   └── NotFoundPage.tsx
 │   ├── styles/
 │   │   └── index.css                  # @theme tokens, base layer, reduced-motion reset
-│   ├── App.tsx                        # Route definitions & scroll restoration
+│   ├── routes.tsx                     # Shared route table + prerender entries (§4.2)
+│   ├── App.tsx                        # Client router (createBrowserRouter)
 │   └── main.tsx                       # React root entry, fontsource imports
 ├── .gitignore                         # committed ✓
 ├── index.html
@@ -308,16 +314,16 @@ knowledgeassemble.org/
 ├── package.json
 ├── tsconfig.json
 ├── tsconfig.node.json
-├── vite.config.ts                     # react() + tailwindcss() plugins
-├── vercel.json                        # SPA rewrites (see §4.4)
-└── README.md                          # Deploy target, no-JS limitation (§4.2)
+├── vite.config.ts                     # react() + tailwindcss() + preview clean URLs
+├── vercel.json                        # cleanUrls + static 404 (see §4.4)
+└── README.md                          # Prerendered delivery, deploy target (§4.2)
 ```
 
 **Removed from the previous draft:** `tailwind.config.ts`, `postcss.config.js` (Tailwind v4 needs neither), `og-image.png` without a generating step (now Phase 6).
 
 **Added:** `SkipLink.tsx`, `Section.tsx`, `SectionHeading.tsx` (both from PRD §34), `useDocumentMeta.ts`, `types/env.d.ts`, `tsconfig.node.json`, `.gitignore`, `README.md`, `vercel.json`.
 
-**Removed in the Vercel decision:** `public/_redirects` and `public/404.html`. Both existed only for hosts that are no longer candidates (§10 Q4).
+**Re-added in the gap-closure pass:** `public/404.html`, as the static 404 for unknown deep links (§4.4). The SPA rewrite was removed and the five routes are prerendered (§4.2).
 
 **Already committed (2026-10-05):** `.gitignore`, `LICENSE` (MIT). The tree root is `knowledgeassemble.org/`, matching the repo name.
 
@@ -443,11 +449,9 @@ Target: **WCAG 2.1 AA**, with the specific 2.2 additions noted. Every claim belo
 
 ### 6.2 Structural Markup Baseline
 
-`index.html` ships the site shell as real markup — header nav, `<main id="main-content">`, footer — inside a `<noscript>` block, so that visitors without JavaScript get valid landmarks and a route out. This is the §4.2 mitigation.
+Each canonical route is prerendered to static HTML at build time, so the served document already contains the full site — header, `<main id="main-content">`, sections, footer — with no JavaScript. `index.html` is only the Vite entry template: it has an empty `#root` and no route content. `#root` is empty in the template but filled in every built `dist/{route}/index.html`.
 
-The shell is scoped to `<noscript>` deliberately. It carries no layout rules of its own; the real header and footer get theirs from Tailwind utilities on the React components, which do not exist until hydration. Rendering it in the `<body>` therefore paints unstyled block markup in the top-left corner for the tens of milliseconds before React mounts, in production as well as dev. Keeping it in `<noscript>` gives each audience what it needs and costs neither a flash nor a duplicated stylesheet.
-
-`#root` ships empty; React fills it. Asserted by `src/test/staticShell.test.ts` and the two `static shell` specs in `tests/e2e/routes.spec.ts`.
+This replaces the former `<noscript>` shell, which the prerendered HTML makes redundant. Asserted by `tests/e2e/prerender.spec.ts`, `tests/e2e/nojs.spec.ts`, and `src/test/guards.test.ts`.
 
 ### 6.3 Touch Targets
 
@@ -519,9 +523,14 @@ Content data files land in Phase 5, after the shell renders, so page structure i
 - Confirm `strict: true` and `noUncheckedIndexedAccess: true` in `tsconfig.json`.
 
 #### Phase 2: Routing Shell & Static Host Configuration
-- Define the 5 routes + `NotFoundPage` in `App.tsx` using `createBrowserRouter`; add `ScrollRestoration`.
-- Commit the host rewrite config from §4.4 for the chosen deploy target — `vercel.json` for Vercel (§10 Q4).
-- Set up semantic shell markup in `index.html` per §6.2, including `lang="en"` and the `<noscript>` GitHub fallback.
+> Superseded by the gap-closure pass. The route table now lives in
+> `src/routes.tsx` (shared by the client router and the prerender), `index.html`
+> is a minimal template with an empty `#root`, and there is no `<noscript>`
+> shell — the prerendered document *is* the no-JS document. `vercel.json` uses
+> `cleanUrls`, not a rewrite. See §4.5 for the delivered arrangement.
+- Define the 5 routes + `NotFoundPage` in `src/routes.tsx`, with `App.tsx` consuming it via `createBrowserRouter`; add `ScrollRestoration`.
+- Commit the host config from §4.4 for the chosen deploy target — `vercel.json` for Vercel (§10 Q4).
+- Keep `index.html` a minimal template (`lang="en"`, `#root`, module script). Do **not** add a `<noscript>` fallback: the prerender in `scripts/prerender.tsx` writes the full document, so a shell would render twice for no-JS visitors.
 - Verify `npm run dev` serves all routes and that a hard refresh on `/principles` does not 404.
 
 #### Phase 3: Design Tokens & Base Styles
@@ -632,8 +641,9 @@ The final four items in the Technical block are carried over from PRD §32 and w
 - [ ] Metadata present: distinct `<title>`, description, canonical, and `og:` tags on all 5 routes.
 - [ ] No console errors on any route.
 - [ ] No broken routes — deep-link hard refresh verified against the production build on the deploy target.
-- [ ] SPA rewrite config committed for the chosen host (§4.4).
-- [ ] Acknowledged deviation from PRD §22 documented in `README.md` (§4.2).
+- [ ] All five canonical routes produce meaningful HTML at build time (gap closure §4).
+- [ ] Vercel static-hosting config (`cleanUrls`) and `public/404.html` committed (§4.4).
+- [ ] `README.md`, `AGENTS.md`, and this plan describe prerendered delivery — no stale CSR exception.
 
 ### Quality
 - [ ] Lighthouse accessibility audit run on all routes; no serious or critical violations.
@@ -659,8 +669,8 @@ Reinforcing PRD §31: no accounts, auth, CMS, blog engine, comments, newsletter,
 | 1 | **External URLs** for the GitHub org, this repo, OpenEdu repo, and OpenEdu site | Verified against the live org. `github.com/KnowledgeAssembly`; this repo at `KnowledgeAssembly/knowledgeassemble.org`; OpenEdu at `KnowledgeAssembly/open-edu` with its Pages site at `knowledgeassembly.github.io/open-edu/`. The invented `openedu.org` domain was removed — it does not resolve. Recorded in §5.1. |
 | 2 | **License choice** | **MIT**, `LICENSE` committed at repo root (2026-10-05), copyright holder `KnowledgeAssembly`. Must be mirrored in `package.json` (`"license": "MIT"`) and named in the site footer (Phase 1, Phase 4). | Resolved |
 | 3 | **Domain registration + deployed origin** for `siteUrl` | Registered and live at the apex **`https://knowledgeassemble.org`** on Vercel (2026-10-05). `www` does not resolve. `siteUrl` is set, so canonical and `og:url` are absolute on every route. |
-| 4 | **Deploy target** | **Vercel.** `vercel.json` carries the SPA rewrite; verified in production — `https://knowledgeassemble.org/principles` returns 200. |
-| 5 | **Is CSR acceptable** given PRD §22? | **Yes, accepted and documented** in `README.md`; §4.2 mitigates with landmarks inside `<noscript>`. Tracked for a V2 prerender. |
+| 4 | **Deploy target** | **Vercel.** `vercel.json` uses `cleanUrls` with `trailingSlash: false`; the five routes are prerendered static files and `dist/404.html` is the static 404. Verified in production. |
+| 5 | **Is CSR acceptable** given PRD §22? | **Superseded by prerendering.** All five canonical routes produce meaningful HTML at build time (gap closure §4, §22); client-side JavaScript only enhances. |
 | 6 | **Website repo visibility** | **Public.** Confirms PRD §10 "open source, by default" and §16. The footer's GitHub CTA can point at `LINKS.githubRepo`. | Resolved |
 
 ### 10.2 Still Open
@@ -669,9 +679,9 @@ Reinforcing PRD §31: no accounts, auth, CMS, blog engine, comments, newsletter,
 | :--- | :--- | :--- | :--- |
 | 7 | Contact link in footer — include only if a real destination exists (PRD §11; do not invent an email) | Phase 4 — footer contents | Omit |
 
-**Q3 resolved 2026-10-05.** `knowledgeassemble.org` is registered and live at the apex on Vercel; `https://knowledgeassemble.org/principles` returns 200, confirming the SPA rewrite works in production. `www` does not resolve; if it is ever added it must 301 to the apex rather than be treated as a second canonical host. `siteUrl` in `src/config/site.ts` is set, turning on absolute canonical and `og:url` for every route.
+**Q3 resolved 2026-10-05.** `knowledgeassemble.org` is registered and live at the apex on Vercel; `https://knowledgeassemble.org/principles` returns 200. `www` does not resolve; if it is ever added it must 301 to the apex rather than be treated as a second canonical host. `siteUrl` in `src/config/site.ts` is set, so canonical and `og:url` are absolute on every route.
 
-**Q4 resolved 2026-10-05.** Deploy target is Vercel; `vercel.json` carries the rewrite. A host change requires migrating that rule — a `vercel.json` left in place on a Netlify or GitHub Pages deploy silently deep-links to a 404.
+**Q4 resolved 2026-10-05.** Deploy target is Vercel. After the gap-closure pass, `vercel.json` uses `cleanUrls` and the routes are prerendered static files with a static `404.html`; the SPA rewrite was removed. A host change requires reproducing that static-hosting behavior.
 
 ---
 

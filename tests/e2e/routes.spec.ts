@@ -54,42 +54,24 @@ test.describe('route smoke and structural constraints', () => {
       await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
       await expect(page.locator('meta[property="og:url"]')).toHaveCount(0);
     });
-  });
 
-  // The static shell is the §4.2 no-JS mitigation, and it is scoped to <noscript>
-  // precisely so that a JavaScript visitor never renders it before hydration.
-  // These two tests are the browser-side half of that contract; src/test/
-  // staticShell.test.ts asserts the same thing statically.
-  test.describe('static shell', () => {
-    test('paints nothing before hydration when JavaScript is enabled', async ({ page }) => {
-      // Block the bundle so the pre-hydration state is observable instead of
-      // being replaced a few tens of milliseconds after load.
-      await page.route('**/*.js', (route) => route.abort());
-      await page.route('**/*.css', (route) => route.abort());
-      await page.goto('/', { waitUntil: 'domcontentloaded' });
+    // A hard request never reaches this component — the host answers with the
+    // prerendered dist/404.html before any JavaScript runs. Only in-app
+    // navigation reaches NotFoundPage, so that is what needs covering.
+    test('renders NotFoundPage on client-side navigation to an unknown path', async ({ page }) => {
+      await page.goto('/');
+      await page.evaluate(() => {
+        window.history.pushState({}, '', '/no-such-page');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
 
-      const painted = await page.evaluate(() => ({
-        children: document.getElementById('root')?.children.length ?? -1,
-        text: document.body.innerText.trim(),
-      }));
+      await expect(page.locator('h1')).toHaveText('Page not found');
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+      await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
 
-      expect(painted.children).toBe(0);
-      expect(painted.text).toBe('');
-    });
-
-    test('gives no-JS visitors real landmarks and a GitHub route out', async ({ browser }) => {
-      const context = await browser.newContext({ javaScriptEnabled: false });
-      const page = await context.newPage();
-      await page.goto('/', { waitUntil: 'load' });
-
-      await expect(page.locator('header')).toHaveCount(1);
-      await expect(page.locator('main#main-content')).toHaveCount(1);
-      await expect(page.locator('nav[aria-label="Primary"]')).toHaveCount(1);
-      await expect(page.locator('footer')).toHaveCount(1);
-      await expect(page.locator('h1')).toHaveCount(1);
-      await expect(page.locator('a[href*="github.com/KnowledgeAssembly"]')).toHaveCount(1);
-
-      await context.close();
+      // It must still offer a way out.
+      await page.getByRole('link', { name: /return home/i }).click();
+      await expect(page.locator('h1')).toHaveText('Building open systems for assembling knowledge.');
     });
   });
 
