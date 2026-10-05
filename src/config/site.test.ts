@@ -2,14 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { defaultMeta, siteName, siteUrl } from './site';
 
 describe('site config', () => {
-  it('keeps siteUrl empty or a valid absolute origin', () => {
-    const isEmpty = siteUrl === '';
-    const isAbsoluteOrigin = /^https:\/\/[^/]+$/.test(siteUrl);
-    expect(isEmpty || isAbsoluteOrigin).toBe(true);
+  it('uses the live apex origin', () => {
+    expect(siteUrl).toBe('https://knowledgeassemble.org');
   });
 
-  it('never points siteUrl at the unregistered domain', () => {
-    expect(siteUrl).not.toContain('knowledgeassemble.org');
+  it('is an absolute origin with no path or trailing slash', () => {
+    expect(siteUrl).toMatch(/^https:\/\/[^/]+$/);
+  });
+
+  it('never treats www as the canonical host', () => {
+    expect(siteUrl).not.toContain('www.');
   });
 
   it('uses the PRD §27 homepage title and description verbatim', () => {

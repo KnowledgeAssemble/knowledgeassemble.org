@@ -3,16 +3,16 @@ import type { PageMeta } from '../types';
 export const siteName = 'KnowledgeAssemble';
 
 /**
- * Deployed origin.
+ * Deployed origin — the apex, no trailing slash.
  *
- * Intentionally empty: `knowledgeassemble.org` is not registered yet
- * (plan §10 Q3), and no tag may point at an unregistered host. While this is
- * empty, `useDocumentMeta` emits title, description, and OpenGraph/Twitter
- * title/description, but **not** canonical or `og:url`. Set this to the
- * deployed origin (e.g. the Vercel production URL, then the custom domain) to
- * turn on absolute canonical and `og:url` everywhere in one place.
+ * `knowledgeassemble.org` is registered and live on Vercel (2026-10-05). The
+ * apex is canonical; `www` does not resolve, and if it is ever added it must
+ * 301 to the apex rather than be treated as a second canonical host.
+ *
+ * With this set, `useDocumentMeta` emits absolute canonical and `og:url` for
+ * every route. It is the single place to change the origin.
  */
-export const siteUrl = '';
+export const siteUrl = 'https://knowledgeassemble.org';
 
 /** Default metadata; the homepage re-exports this. PRD §27. */
 export const defaultMeta: PageMeta = {

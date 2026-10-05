@@ -2,7 +2,7 @@
 
 Public website for **KnowledgeAssemble**, an open-source umbrella organization stewarding tools that make knowledge portable and composable. Its first flagship project is [OpenEdu](https://github.com/KnowledgeAssembly/open-edu).
 
-The repo name matches the intended production domain, which is **not yet registered** (plan §10 Q3).
+The site is live at the apex [`knowledgeassemble.org`](https://knowledgeassemble.org) on Vercel; the repo name matches the production domain. `www` does not resolve, and if it is ever added it must 301 to the apex.
 
 Build instructions are in [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md), which is the authority for how to build. The product specification is [`docs/KNOWLEDGEASSEMBLE-WEBSITE-V1.md`](docs/KNOWLEDGEASSEMBLE-WEBSITE-V1.md). This README records setup facts only.
 
@@ -23,23 +23,26 @@ There is deliberately no `tailwind.config.ts`, no `postcss.config.js` (the Vite 
 
 ## Local development
 
-Requires Node `^20.19 || >=22.12` and npm.
+Requires Node `>=22.12` and npm.
 
 ```sh
 npm install
 npm run dev        # Vite dev server
 npm run build      # tsc -b, then vite build into dist/
 npm run preview    # serve the production build
-npm run typecheck  # tsc --noEmit
+npm run typecheck  # tsc --noEmit plus the e2e tsconfig
+npm run test       # Vitest unit, component, and guard tests
+npm run test:e2e   # Playwright route, axe, responsive, and SEO specs
+npm run verify     # typecheck + test + build + e2e (what CI runs)
 ```
 
-Status: Phases 1–7 complete. Pages are built on the design tokens in `src/styles/index.css`; content lives in `src/content/`, external URLs in `src/config/links.ts`, and site metadata in `src/config/site.ts`. Canonical and `og:url` are deferred until the domain is registered (see below). With JavaScript disabled, the static shell in `index.html` is what renders.
+Status: Phases 1–11 implemented. Pages are built on the design tokens in `src/styles/index.css`; content lives in `src/content/`, external URLs in `src/config/links.ts`, and site metadata in `src/config/site.ts`. Canonical and `og:url` are absolute because `siteUrl` is set. With JavaScript disabled, the static shell in `index.html` is what renders.
 
 ## Deploy target: Vercel
 
 Vercel is the chosen host (plan §10 Q4). The SPA rewrite that keeps deep links such as `/principles` from 404ing on a hard refresh lives in [`vercel.json`](vercel.json) — all paths rewrite to `/index.html` with a `200` (plan §4.4).
 
-Domain registration (plan §10 Q3) blocks canonical and `og:url` wiring in Phase 7. Never ship those tags pointing at the unregistered domain.
+`siteUrl` is set to the live apex `https://knowledgeassemble.org` (plan §10 Q3 resolved), so canonical and `og:url` are absolute. `www` does not resolve; if it is ever added it must 301 to the apex.
 
 ## Known limitation: V1 is client-side rendered
 

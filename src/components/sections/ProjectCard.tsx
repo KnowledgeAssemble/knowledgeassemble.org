@@ -28,7 +28,7 @@ const statusVariant: Record<ProjectStatus, 'neutral' | 'verified'> = {
  */
 export default function ProjectCard({ project, ctaLabel, hideCta = false }: ProjectCardProps) {
   const externalLabel = ctaLabel ?? `Explore ${project.name}`;
-  const internalLabel = ctaLabel ?? 'Learn more';
+  const internalLabel = ctaLabel ?? `Explore ${project.name}`;
   const externalUrl = project.externalUrl;
 
   return (
