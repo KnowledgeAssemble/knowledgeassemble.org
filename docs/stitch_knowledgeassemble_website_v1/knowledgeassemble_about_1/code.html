@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>About — KnowledgeAssemble</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      body {
+        overscroll-behavior: none;
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0037b0",
+            "primary-container": "#1d4ed8",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#cad3ff",
+            "primary-fixed": "#dce1ff",
+            "primary-fixed-dim": "#b7c4ff",
+            "secondary": "#006781",
+            "secondary-container": "#8fdfff",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#00647d",
+            "tertiary": "#004f35",
+            "tertiary-container": "#006948",
+            "on-tertiary": "#ffffff",
+            "surface": "#f9f9f8",
+            "surface-dim": "#dadad9",
+            "surface-bright": "#f9f9f8",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f3f4f3",
+            "surface-container": "#eeeeed",
+            "surface-container-high": "#e8e8e7",
+            "surface-container-highest": "#e2e2e2",
+            "on-surface": "#1a1c1c",
+            "on-surface-variant": "#434655",
+            "outline": "#747686",
+            "outline-variant": "#c4c5d7",
+            "error": "#ba1a1a"
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "0.75rem",
+            "xl": "1rem",
+            "2xl": "1.5rem",
+            "3xl": "2rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"],
+            mono: ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface text-on-surface antialiased selection:bg-primary-fixed selection:text-primary min-h-screen flex flex-col justify-between">
+<!-- Minimal Modern Header -->
+<header class="sticky top-0 z-50 bg-surface/85 backdrop-blur-md border-b border-outline-variant/40 transition-all">
+<div class="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<a class="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-primary rounded-xl p-1" data-path="home" href="#">
+<div class="w-10 h-10 rounded-xl bg-surface-container-lowest border border-outline-variant/60 shadow-sm flex items-center justify-center group-hover:border-primary transition-colors">
+<svg class="w-7 h-7" fill="none" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#f3f4f3" height="13" rx="3" stroke="#0037b0" stroke-width="2.5" width="13" x="4" y="4"></rect>
+<rect fill="#f3f4f3" height="13" rx="3" stroke="#0037b0" stroke-width="2.5" width="13" x="23" y="4"></rect>
+<rect fill="#0037b0" height="13" rx="3" stroke="#0037b0" stroke-width="2.5" width="13" x="13.5" y="23"></rect>
+<line stroke="#0037b0" stroke-linecap="round" stroke-width="2" x1="17" x2="23" y1="10.5" y2="10.5"></line>
+<line stroke="#0037b0" stroke-linecap="round" stroke-width="2" x1="10.5" x2="16.5" y1="17" y2="23"></line>
+<line stroke="#0037b0" stroke-linecap="round" stroke-width="2" x1="29.5" x2="23.5" y1="17" y2="23"></line>
+</svg>
+</div>
+<span class="font-bold text-lg tracking-tight text-on-surface group-hover:text-primary transition-colors">KnowledgeAssemble</span>
+</a>
+</div>
+<nav class="hidden md:flex items-center gap-1 bg-surface-container-low/70 p-1.5 rounded-full border border-outline-variant/40">
+<a class="px-4 py-1.5 rounded-full text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-lowest transition-all" data-path="projects" href="#">Projects</a>
+<a class="px-4 py-1.5 rounded-full text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-lowest transition-all" data-path="principles" href="#">Principles</a>
+<a class="px-4 py-1.5 rounded-full text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-lowest transition-all" data-path="community" href="#">Community</a>
+<a aria-current="page" class="px-4 py-1.5 rounded-full text-sm font-semibold bg-surface-container-lowest text-primary shadow-sm" data-path="about" href="#">About</a>
+</nav>
+<div class="flex items-center gap-3">
+<a class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant/60 bg-surface-container-lowest hover:border-primary hover:text-primary font-mono text-xs font-semibold text-on-surface transition-all shadow-sm" href="https://github.com" rel="noopener noreferrer" target="_blank">
+<span>GitHub</span>
+<span class="material-symbols-outlined text-[15px]">arrow_outward</span>
+</a>
+<button aria-label="Profile" class="w-10 h-10 rounded-full bg-surface-container-high hover:bg-primary-fixed flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors focus:outline-none">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</button>
+</div>
+</div>
+</header>
+<main class="w-full flex-grow">
+<!-- Hero Header -->
+<section class="relative pt-12 pb-16 lg:pt-16 lg:pb-24 overflow-hidden">
+<!-- Soft ambient backdrop blobs -->
+<div class="absolute top-10 left-1/2 -translate-x-1/2 w-[720px] h-[360px] bg-gradient-to-r from-primary-fixed/30 via-secondary-container/20 to-tertiary-fixed/20 blur-3xl -z-10 rounded-full pointer-events-none"></div>
+<div class="max-w-7xl mx-auto px-6 lg:px-10">
+<div class="max-w-3xl">
+<!-- Tag Pill -->
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-lowest border border-outline-variant/60 shadow-xs mb-6">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant font-mono">• Genesis &amp; Mission • Open Knowledge</span>
+</div>
+<h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-on-surface mb-6 leading-[1.15]">
+            About KnowledgeAssemble
+          </h1>
+<p class="text-xl sm:text-2xl text-on-surface-variant font-normal leading-relaxed">
+            We are exploring what it could look like if knowledge were easier to create, connect, explore, and share.
+          </p>
+</div>
+</div>
+</section>
+<!-- Core Observation Section -->
+<section class="py-8 lg:py-12">
+<div class="max-w-7xl mx-auto px-6 lg:px-10">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+<!-- Spacious Narrative Card -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant/50 rounded-3xl p-8 sm:p-12 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-2 mb-6">
+<span class="w-7 h-7 rounded-lg bg-primary-fixed flex items-center justify-center text-primary font-bold text-xs">01</span>
+<span class="text-xs font-bold uppercase tracking-wider text-outline font-mono">Foundational Insight</span>
+</div>
+<h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-on-surface mb-6 leading-snug">
+                Much of the world's knowledge exists inside books, applications, websites, databases, institutions, and proprietary platforms.
+              </h2>
+<p class="text-base sm:text-lg text-on-surface-variant leading-relaxed mb-8 font-normal">
+                These systems are useful, but the knowledge within them is often difficult to move, remix, or experience in new ways. Silos turn intellectual breakthroughs into isolated gardens.
+              </p>
+</div>
+<div class="p-6 sm:p-8 rounded-2xl bg-surface-container-low border border-outline-variant/40 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-primary rounded-l-full"></div>
+<p class="text-lg sm:text-xl font-semibold text-primary leading-relaxed">
+                KnowledgeAssemble explores open systems that separate knowledge from the software used to present it.
+              </p>
+</div>
+</div>
+<!-- Supporting Diagrammatic Minimal Cards -->
+<div class="lg:col-span-5 flex flex-col gap-4">
+<!-- Decoupled Architecture -->
+<div class="p-6 sm:p-7 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-sm hover:border-primary/50 transition-all flex flex-col justify-between flex-1">
+<div class="flex items-start gap-4">
+<div class="w-11 h-11 rounded-xl bg-secondary-container/40 text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">layers</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-on-surface mb-1">Decoupled Architecture</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                    Vendor-agnostic graphs and abstract syntax schemas survive UI rebrandings, runtime deprecations, and browser transitions.
+                  </p>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs font-mono text-outline">
+<span>RFC-001 SPECS</span>
+<span class="text-secondary font-semibold">Decoupled Surface</span>
+</div>
+</div>
+<!-- Portable Primitives -->
+<div class="p-6 sm:p-7 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-sm hover:border-primary/50 transition-all flex flex-col justify-between flex-1">
+<div class="flex items-start gap-4">
+<div class="w-11 h-11 rounded-xl bg-primary-fixed/50 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">extension</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-on-surface mb-1">Portable Primitives</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                    Concepts and learning modules as self-contained micro-units that work seamlessly across browsers, apps, and notebooks.
+                  </p>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs font-mono text-outline">
+<span>INTEROPERABLE</span>
+<span class="text-primary font-semibold">Zero Vendor Lock</span>
+</div>
+</div>
+<!-- Permanent Commons -->
+<div class="p-6 sm:p-7 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-sm hover:border-primary/50 transition-all flex flex-col justify-between flex-1">
+<div class="flex items-start gap-4">
+<div class="w-11 h-11 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">public</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-on-surface mb-1">Permanent Commons</h3>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                    Open protocols backed by MIT &amp; Apache 2.0 licensing guarantees to prevent corporate enclosures of human wisdom.
+                  </p>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs font-mono text-outline">
+<span>LICENSE</span>
+<span class="text-on-surface font-semibold">Public Domain &amp; Open</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Organizational Topology: Umbrella Stewardship -->
+<section class="py-16 lg:py-24 bg-surface-container-low/60 border-y border-outline-variant/30">
+<div class="max-w-7xl mx-auto px-6 lg:px-10">
+<div class="max-w-3xl mb-12">
+<div class="inline-flex items-center gap-2 mb-3">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-xs font-bold uppercase tracking-wider text-secondary font-mono">Organizational Topology</span>
+</div>
+<h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-on-surface mb-4">
+            Umbrella Stewardship
+          </h2>
+<p class="text-base sm:text-lg text-on-surface-variant leading-relaxed">
+            KnowledgeAssemble provides the philosophical and technical umbrella, ensuring tools remain open, modular, and human-centered across independent initiatives and working groups.
+          </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Modern Visual Interactive Tree Card -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant/50 rounded-3xl p-6 sm:p-9 shadow-sm">
+<div class="flex items-center justify-between pb-6 mb-8 border-b border-outline-variant/30">
+<div class="flex items-center gap-3">
+<span class="w-9 h-9 rounded-xl bg-primary-fixed/60 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">account_tree</span>
+</span>
+<div>
+<h3 class="font-bold text-on-surface">Ecosystem Hierarchy</h3>
+<p class="text-xs text-on-surface-variant font-mono">v2025.alpha structure</p>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono font-medium text-on-surface-variant">Active Tree</span>
+</div>
+<!-- Modern visual tree representation -->
+<div class="space-y-4 relative">
+<!-- Root Node -->
+<div class="p-5 rounded-2xl bg-primary text-on-primary shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center font-bold text-sm">
+                    KA
+                  </div>
+<div>
+<h4 class="font-bold text-base sm:text-lg tracking-tight">KnowledgeAssemble</h4>
+<p class="text-xs text-on-primary/80">Umbrella Core &amp; Protocols</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-white/20 text-xs font-mono font-medium">Core Node</span>
+</div>
+<!-- Connecting stem line -->
+<div class="ml-6 pl-6 border-l-2 border-dashed border-outline-variant/60 space-y-4 pt-2">
+<!-- Child 1: OpenEdu -->
+<div class="p-4 sm:p-5 rounded-2xl bg-surface-container-low hover:bg-secondary-container/20 border border-outline-variant/40 transition-all flex items-center justify-between group">
+<div class="flex items-center gap-3.5">
+<div class="w-9 h-9 rounded-xl bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">school</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h5 class="font-bold text-on-surface text-sm sm:text-base group-hover:text-secondary transition-colors">OpenEdu</h5>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/60 text-on-secondary-container text-[11px] font-semibold">Flagship</span>
+</div>
+<p class="text-xs text-on-surface-variant">First major project &amp; educational framework</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform text-[18px]">chevron_right</span>
+</div>
+<!-- Child 2: Tools & Formats -->
+<div class="p-4 sm:p-5 rounded-2xl bg-surface-container-low hover:bg-primary-fixed/20 border border-outline-variant/40 transition-all flex items-center justify-between group">
+<div class="flex items-center gap-3.5">
+<div class="w-9 h-9 rounded-xl bg-primary-fixed text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">code_blocks</span>
+</div>
+<div>
+<h5 class="font-bold text-on-surface text-sm sm:text-base group-hover:text-primary transition-colors">Knowledge Tools &amp; Formats</h5>
+<p class="text-xs text-on-surface-variant">Parsers, AST specs, and exchange schemas</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform text-[18px]">chevron_right</span>
+</div>
+<!-- Child 3: Experiments -->
+<div class="p-4 sm:p-5 rounded-2xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 transition-all flex items-center justify-between group">
+<div class="flex items-center gap-3.5">
+<div class="w-9 h-9 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">biotech</span>
+</div>
+<div>
+<h5 class="font-bold text-on-surface text-sm sm:text-base group-hover:text-on-surface transition-colors">Experiments</h5>
+<p class="text-xs text-on-surface-variant">Interactive learning lab &amp; spatial interfaces</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-1 transition-transform text-[18px]">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Stats Bar -->
+<div class="mt-8 pt-6 border-t border-outline-variant/30 grid grid-cols-3 gap-3">
+<div class="p-3.5 rounded-2xl bg-surface-container-low text-center">
+<span class="block text-xl sm:text-2xl font-extrabold text-primary">100%</span>
+<span class="text-xs font-medium text-on-surface-variant">Free &amp; Open</span>
+</div>
+<div class="p-3.5 rounded-2xl bg-surface-container-low text-center">
+<span class="block text-xl sm:text-2xl font-extrabold text-secondary">Zero</span>
+<span class="text-xs font-medium text-on-surface-variant">Vendor Lock-In</span>
+</div>
+<div class="p-3.5 rounded-2xl bg-surface-container-low text-center">
+<span class="block text-xl sm:text-2xl font-extrabold text-on-surface">Public</span>
+<span class="text-xs font-medium text-on-surface-variant">Open Standards</span>
+</div>
+</div>
+</div>
+<!-- Stewardship Pillars -->
+<div class="lg:col-span-5 flex flex-col gap-4">
+<div class="bg-surface-container-lowest border border-outline-variant/40 p-6 sm:p-7 rounded-2xl shadow-sm">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-9 h-9 rounded-xl bg-primary-fixed/50 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+</div>
+<h3 class="font-bold text-base text-on-surface">Technical Custodianship</h3>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                We host canonical specifications, coordinate interoperability standards, and safeguard the software commons against proprietary capture. Projects adhere to common schemas enabling bidirectional sync.
+              </p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/40 p-6 sm:p-7 rounded-2xl shadow-sm">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-9 h-9 rounded-xl bg-secondary-container/50 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">psychology</span>
+</div>
+<h3 class="font-bold text-base text-on-surface">Philosophical Cohesion</h3>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                Learning and human thought must never be captive to an advertising auction, subscription paywall, or proprietary database partition. We build for universal accessibility.
+              </p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/40 p-6 sm:p-7 rounded-2xl shadow-sm">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-9 h-9 rounded-xl bg-surface-container-high text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">handyman</span>
+</div>
+<h3 class="font-bold text-base text-on-surface">Modular Tooling</h3>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                Small, composable utilities—lexers, semantic encoders, visual graph stitchers—that students, teachers, and developers can embed directly into their personalized workflows.
+              </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- First Major Project: OpenEdu Showcase -->
+<section class="py-16 lg:py-24">
+<div class="max-w-7xl mx-auto px-6 lg:px-10">
+<div class="rounded-3xl bg-gradient-to-br from-primary-container via-primary to-[#002884] text-on-primary p-8 sm:p-12 lg:p-16 shadow-xl relative overflow-hidden">
+<!-- Subtle decorative radial background blur -->
+<div class="absolute -top-32 -right-32 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-32 -left-32 w-96 h-96 bg-secondary-container/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative z-10">
+<!-- Header inside banner -->
+<div class="max-w-3xl mb-12">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md mb-6">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span class="text-xs font-semibold uppercase tracking-wider text-white font-mono">Flagship Initiative</span>
+</div>
+<h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+                Our first major project: OpenEdu
+              </h2>
+<p class="text-lg sm:text-xl text-on-primary-container leading-relaxed font-normal">
+                OpenEdu is our first major exploration of this idea in education — an open framework designed to make learning experiences truly interactive, composable, and universally accessible.
+              </p>
+</div>
+<!-- 3 Clean Feature Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 hover:bg-white/15 transition-all">
+<div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mb-4 text-white">
+<span class="material-symbols-outlined text-[22px]">widgets</span>
+</div>
+<h3 class="text-lg font-bold text-white mb-2">Composable Courseware</h3>
+<p class="text-sm text-on-primary-container/90 leading-relaxed">
+                  Courses compiled from modular graph nodes instead of rigid linear slides, adapting easily to every learner's pace.
+                </p>
+</div>
+<div class="p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 hover:bg-white/15 transition-all">
+<div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mb-4 text-white">
+<span class="material-symbols-outlined text-[22px]">swap_horiz</span>
+</div>
+<h3 class="text-lg font-bold text-white mb-2">Universal Transpilers</h3>
+<p class="text-sm text-on-primary-container/90 leading-relaxed">
+                  Export any module directly to responsive interactive web, printable learning packs, or low-power offline e-ink tablets.
+                </p>
+</div>
+<div class="p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 hover:bg-white/15 transition-all">
+<div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mb-4 text-white">
+<span class="material-symbols-outlined text-[22px]">group_work</span>
+</div>
+<h3 class="text-lg font-bold text-white mb-2">Collaborative Peer Review</h3>
+<p class="text-sm text-on-primary-container/90 leading-relaxed">
+                  Decentralized, open attestation of educational materials by students and educators worldwide without gatekeepers.
+                </p>
+</div>
+</div>
+<!-- CTA row -->
+<div class="flex flex-wrap items-center gap-6">
+<a class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-white text-primary font-bold text-sm hover:bg-surface-container-low transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-white" data-path="projects" href="#">
+<span>Explore OpenEdu</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<span class="text-xs font-mono text-on-primary-container">status: active_pilot // public_spec</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Governance & Open Development Callout -->
+<section class="py-12 lg:py-16">
+<div class="max-w-7xl mx-auto px-6 lg:px-10">
+<!-- Main Open Development Card -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-3xl p-8 sm:p-12 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-8">
+<div class="max-w-2xl">
+<div class="inline-flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary text-[18px]">balance</span>
+<span class="text-xs font-bold uppercase tracking-wider text-outline font-mono">Governance &amp; Stewardship</span>
+</div>
+<h3 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-on-surface mb-3">
+              An open-source collective committed to public goods and transparent development.
+            </h3>
+<p class="text-sm sm:text-base text-on-surface-variant leading-relaxed">
+              We operate out in the open. Our design decisions, working groups, request-for-comments (RFCs), and codebases are freely inspectable and community owned.
+            </p>
+</div>
+<div class="shrink-0">
+<a class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-primary hover:bg-primary-container text-white font-semibold text-sm transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" href="https://github.com" rel="noopener noreferrer" target="_blank">
+<span class="font-mono">View on GitHub</span>
+<span class="material-symbols-outlined text-[18px]">arrow_outward</span>
+</a>
+</div>
+</div>
+<!-- 3 Foundational Values -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="p-7 rounded-2xl bg-surface-container-lowest border border-outline-variant/40 shadow-xs">
+<div class="font-mono text-xs font-bold text-secondary mb-3">01 // COMMONS</div>
+<h4 class="text-lg font-bold text-on-surface mb-2">Non-Rivalrous</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+              Knowledge expands through unhindered sharing; restricting intellectual access diminishes human potential.
+            </p>
+</div>
+<div class="p-7 rounded-2xl bg-surface-container-lowest border border-outline-variant/40 shadow-xs">
+<div class="font-mono text-xs font-bold text-secondary mb-3">02 // INDEPENDENCE</div>
+<h4 class="text-lg font-bold text-on-surface mb-2">Self-Sovereign Data</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+              Learners and researchers must own their notes, learning history, and semantic maps without cloud dependencies.
+            </p>
+</div>
+<div class="p-7 rounded-2xl bg-surface-container-lowest border border-outline-variant/40 shadow-xs">
+<div class="font-mono text-xs font-bold text-secondary mb-3">03 // LONGEVITY</div>
+<h4 class="text-lg font-bold text-on-surface mb-2">Archival Longevity</h4>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+              We build systems intended to endure decades, prioritizing plain formats over ephemeral Silicon Valley stacks.
+            </p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Clean Minimal Footer -->
+<footer class="w-full bg-surface-container-low border-t border-outline-variant/40 py-12 mt-16">
+<div class="max-w-7xl mx-auto px-6 lg:px-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2.5">
+<svg class="w-5 h-5" fill="none" viewbox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#f3f4f3" height="13" rx="2" stroke="#0037b0" stroke-width="2.5" width="13" x="4" y="4"></rect>
+<rect fill="#f3f4f3" height="13" rx="2" stroke="#0037b0" stroke-width="2.5" width="13" x="23" y="4"></rect>
+<rect fill="#0037b0" height="13" rx="2" stroke="#0037b0" stroke-width="2.5" width="13" x="13.5" y="23"></rect>
+<line stroke="#0037b0" stroke-linecap="round" stroke-width="2" x1="17" x2="23" y1="10.5" y2="10.5"></line>
+<line stroke="#0037b0" stroke-linecap="round" stroke-width="2" x1="10.5" x2="16.5" y1="17" y2="23"></line>
+<line stroke="#0037b0" stroke-linecap="round" stroke-width="2" x1="29.5" x2="23.5" y1="17" y2="23"></line>
+</svg>
+<span class="font-bold text-on-surface tracking-tight">KnowledgeAssemble</span>
+</div>
+<p class="text-xs text-on-surface-variant max-w-md leading-relaxed">
+          Open systems for knowledge. Sustaining decentralized protocols, archival tools, and shared cultural commons.
+        </p>
+<p class="text-xs text-outline mt-1 font-mono">
+          © 2025 KnowledgeAssemble Foundation. Free &amp; Open Source under Apache-2.0.
+        </p>
+</div>
+<nav class="flex flex-wrap items-center gap-6 text-sm font-medium text-on-surface-variant">
+<a class="hover:text-primary transition-colors" data-path="projects" href="#">Projects</a>
+<a class="hover:text-primary transition-colors" data-path="principles" href="#">Principles</a>
+<a class="hover:text-primary transition-colors" data-path="community" href="#">Community</a>
+<a class="hover:text-primary transition-colors text-primary font-semibold" data-path="about" href="#">About</a>
+<a class="inline-flex items-center gap-1 hover:text-primary transition-colors font-mono text-xs" href="https://github.com" rel="noopener noreferrer" target="_blank">
+<span>GitHub</span>
+<span class="material-symbols-outlined text-[13px]">arrow_outward</span>
+</a>
+</nav>
+</div>
+</footer>
+</body></html>

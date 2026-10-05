@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Principles — KnowledgeAssemble</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0037b0",
+            "primary-container": "#1d4ed8",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#cad3ff",
+            "primary-fixed": "#dce1ff",
+            "primary-fixed-dim": "#b7c4ff",
+            "secondary": "#006781",
+            "secondary-container": "#8fdfff",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#00647d",
+            "tertiary": "#004f35",
+            "tertiary-container": "#006948",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-container": "#76eab6",
+            "tertiary-fixed": "#85f8c4",
+            "background": "#f9f9f8",
+            "on-background": "#1a1c1c",
+            "surface": "#f9f9f8",
+            "surface-dim": "#dadad9",
+            "surface-bright": "#f9f9f8",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f3f4f3",
+            "surface-container": "#eeeeed",
+            "surface-container-high": "#e8e8e7",
+            "surface-container-highest": "#e2e2e2",
+            "on-surface": "#1a1c1c",
+            "on-surface-variant": "#434655",
+            "outline": "#747686",
+            "outline-variant": "#c4c5d7",
+            "error": "#ba1a1a"
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "0.75rem",
+            "xl": "1rem",
+            "2xl": "1.5rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #f9f9f8;
+        color: #1a1c1c;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-surface text-on-surface antialiased selection:bg-primary-fixed selection:text-primary">
+<!-- Minimal Header Navigation -->
+<header class="sticky top-0 z-50 bg-surface/85 backdrop-blur-md border-b border-outline-variant/30 transition-all">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 h-16 flex items-center justify-between">
+<a class="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-primary rounded-lg p-1" data-path="home" href="#">
+<div class="w-8 h-8 rounded-lg overflow-hidden shrink-0 transition-transform group-hover:scale-105">
+<svg fill="none" height="32" viewbox="0 0 40 40" width="32" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#f8f9ff" height="13" rx="2" stroke="#1d4ed8" stroke-width="2.5" width="13" x="4" y="4"></rect>
+<rect fill="#f8f9ff" height="13" rx="2" stroke="#1d4ed8" stroke-width="2.5" width="13" x="23" y="4"></rect>
+<rect fill="#1d4ed8" height="13" rx="2" stroke="#1d4ed8" stroke-width="2.5" width="13" x="13.5" y="23"></rect>
+<line stroke="#1d4ed8" stroke-linecap="round" stroke-width="2" x1="17" x2="23" y1="10.5" y2="10.5"></line>
+<line stroke="#1d4ed8" stroke-linecap="round" stroke-width="2" x1="10.5" x2="16.5" y1="17" y2="23"></line>
+<line stroke="#1d4ed8" stroke-linecap="round" stroke-width="2" x1="29.5" x2="23.5" y1="17" y2="23"></line>
+</svg>
+</div>
+<span class="font-bold text-lg tracking-tight text-on-surface">KnowledgeAssemble</span>
+</a>
+<!-- Center navigation links -->
+<nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+<a class="text-on-surface-variant hover:text-primary transition-colors py-1" data-path="projects" href="#">Projects</a>
+<a aria-current="page" class="text-primary font-semibold py-1 border-b-2 border-primary" data-path="principles" href="#">Principles</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors py-1" data-path="community" href="#">Community</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors py-1" data-path="about" href="#">About</a>
+</nav>
+<!-- Action items -->
+<div class="flex items-center gap-3">
+<a class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant/60 text-xs font-semibold text-on-surface hover:bg-surface-container transition-all" href="https://github.com" rel="noopener noreferrer" target="_blank">
+<span>GitHub</span>
+<span class="material-symbols-outlined text-[15px]">north_east</span>
+</a>
+<button aria-label="Account profile" class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm hover:opacity-95 transition-opacity">
+<span class="material-symbols-outlined text-[19px]">person</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full">
+<!-- Hero / Header Section -->
+<section class="max-w-7xl mx-auto px-6 lg:px-12 pt-12 pb-10 md:pt-16 md:pb-14">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-8 border-b border-outline-variant/30">
+<div class="flex flex-col gap-4 max-w-2xl">
+<div class="inline-flex items-center gap-2 w-fit px-3 py-1 rounded-full bg-primary-fixed/60 border border-primary-fixed text-primary text-xs font-semibold tracking-wide">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span>• Core Tenets • Living Canon</span>
+</div>
+<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface">Principles</h1>
+<p class="text-lg md:text-xl text-on-surface-variant font-normal leading-relaxed">
+            KnowledgeAssemble is guided by a small set of principles. They describe how we think about technology, knowledge, and the people who use it.
+          </p>
+</div>
+<!-- Quick counter badge -->
+<div class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-surface-container border border-outline-variant/30 shrink-0">
+<div class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-[20px]">auto_stories</span>
+</div>
+<div>
+<div class="text-xs uppercase font-bold tracking-wider text-outline">Canon Snapshot</div>
+<div class="text-sm font-bold text-on-surface">7 Guiding Axioms • 100% Open Standards</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Principles Grid (13.1 - 13.6) -->
+<section class="max-w-7xl mx-auto px-6 lg:px-12 py-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- 13.1 Open by default -->
+<article class="group p-7 rounded-2xl bg-surface-container-lowest border border-outline-variant/40 hover:border-primary/50 hover:shadow-lg transition-all flex flex-col justify-between">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-low font-bold text-xs text-primary tracking-wide">
+                13.1 • 01
+              </span>
+<div class="w-9 h-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">lock_open</span>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">Open by default</h2>
+<p class="text-sm text-on-surface-variant mt-2.5 leading-relaxed">
+                Prefer open-source software, open standards, open formats, and publicly understandable systems.
+              </p>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/20 flex items-center justify-between text-xs text-outline font-medium">
+<span class="tracking-wide">FORMAT_INDEPENDENCE</span>
+<span class="material-symbols-outlined text-[17px] opacity-75">public</span>
+</div>
+</article>
+<!-- 13.2 Knowledge should be portable -->
+<article class="group p-7 rounded-2xl bg-surface-container-lowest border border-outline-variant/40 hover:border-primary/50 hover:shadow-lg transition-all flex flex-col justify-between">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-low font-bold text-xs text-primary tracking-wide">
+                13.2 • 02
+              </span>
+<div class="w-9 h-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">sync_alt</span>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">Knowledge should be portable</h2>
+<p class="text-sm text-on-surface-variant mt-2.5 leading-relaxed">
+                Knowledge should not depend unnecessarily on the application that happens to display it.
+              </p>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/20 flex items-center justify-between text-xs text-outline font-medium">
+<span class="tracking-wide">DATA_SOVEREIGNTY</span>
+<span class="material-symbols-outlined text-[17px] opacity-75">folder_shared</span>
+</div>
+</article>
+<!-- 13.3 Composable over monolithic -->
+<article class="group p-7 rounded-2xl bg-surface-container-lowest border border-outline-variant/40 hover:border-primary/50 hover:shadow-lg transition-all flex flex-col justify-between">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-low font-bold text-xs text-primary tracking-wide">
+                13.3 • 03
+              </span>
+<div class="w-9 h-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">extension</span>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">Composable over monolithic</h2>
+<p class="text-sm text-on-surface-variant mt-2.5 leading-relaxed">
+                Prefer systems that can be combined, replaced, extended, and reused.
+              </p>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/20 flex items-center justify-between text-xs text-outline font-medium">
+<span class="tracking-wide">MODULAR_TOPOLOGY</span>
+<span class="material-symbols-outlined text-[17px] opacity-75">dashboard_customize</span>
+</div>
+</article>
+<!-- 13.4 Experience matters -->
+<article class="group p-7 rounded-2xl bg-surface-container-lowest border border-outline-variant/40 hover:border-primary/50 hover:shadow-lg transition-all flex flex-col justify-between">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-low font-bold text-xs text-primary tracking-wide">
+                13.4 • 04
+              </span>
+<div class="w-9 h-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">explore</span>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">Experience matters</h2>
+<p class="text-sm text-on-surface-variant mt-2.5 leading-relaxed">
+                Knowledge is more than stored information. People understand through interaction, exploration, context, and experience.
+              </p>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/20 flex items-center justify-between text-xs text-outline font-medium">
+<span class="tracking-wide">COGNITIVE_AFFORDANCE</span>
+<span class="material-symbols-outlined text-[17px] opacity-75">touch_app</span>
+</div>
+</article>
+<!-- 13.5 Accessibility is foundational -->
+<article class="group p-7 rounded-2xl bg-surface-container-lowest border border-outline-variant/40 hover:border-primary/50 hover:shadow-lg transition-all flex flex-col justify-between">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-low font-bold text-xs text-primary tracking-wide">
+                13.5 • 05
+              </span>
+<div class="w-9 h-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">accessibility_new</span>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">Accessibility is foundational</h2>
+<p class="text-sm text-on-surface-variant mt-2.5 leading-relaxed">
+                Accessibility should influence architecture, interaction, content, and visual design from the beginning.
+              </p>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/20 flex items-center justify-between text-xs text-outline font-medium">
+<span class="tracking-wide">UNIVERSAL_ACCESS</span>
+<span class="material-symbols-outlined text-[17px] opacity-75">visibility</span>
+</div>
+</article>
+<!-- 13.6 Human judgment matters -->
+<article class="group p-7 rounded-2xl bg-surface-container-lowest border border-outline-variant/40 hover:border-primary/50 hover:shadow-lg transition-all flex flex-col justify-between">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-low font-bold text-xs text-primary tracking-wide">
+                13.6 • 06
+              </span>
+<div class="w-9 h-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-[20px]">psychology</span>
+</div>
+</div>
+<div>
+<h2 class="text-xl font-bold text-on-surface tracking-tight group-hover:text-primary transition-colors">Human judgment matters</h2>
+<p class="text-sm text-on-surface-variant mt-2.5 leading-relaxed">
+                AI can assist with creation, discovery, and exploration, but people remain responsible for meaning, context, and judgment.
+              </p>
+</div>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant/20 flex items-center justify-between text-xs text-outline font-medium">
+<span class="tracking-wide">ETHICAL_AGENCY</span>
+<span class="material-symbols-outlined text-[17px] opacity-75">person_check</span>
+</div>
+</article>
+</div>
+</section>
+<!-- Keystone Priority Principle 13.7 -->
+<section class="max-w-7xl mx-auto px-6 lg:px-12 py-8">
+<div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary-container text-on-primary p-8 md:p-12 shadow-xl">
+<!-- Subtle modern geometric graphic elements in background -->
+<div class="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-white/5 pointer-events-none blur-2xl"></div>
+<div class="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-secondary-container/10 pointer-events-none blur-xl"></div>
+<div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+<div class="lg:col-span-7 flex flex-col gap-5">
+<div class="inline-flex items-center gap-2.5 px-3.5 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-bold uppercase tracking-wider w-fit text-primary-fixed">
+<span class="material-symbols-outlined text-[16px] text-tertiary-fixed">award_star</span>
+<span>Priority Principle • Apex Keystone • 13.7</span>
+</div>
+<h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">Build, test, learn</h2>
+<p class="text-base md:text-lg text-on-primary-container leading-relaxed font-normal">
+              Ideas should be tested through real use rather than protected by elaborate speculation. KnowledgeAssemble demonstrates this philosophy through its own open, iterative development process.
+            </p>
+<div class="flex items-center gap-3 pt-2 text-sm text-on-primary-container">
+<span class="material-symbols-outlined text-tertiary-fixed text-[20px]">check_circle</span>
+<span class="font-medium">Applied directly in community workshops, sandbox sprints, and open classroom labs.</span>
+</div>
+</div>
+<!-- Clean interactive loop diagram / progress tracker -->
+<div class="lg:col-span-5">
+<div class="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 p-6 flex flex-col gap-5">
+<div class="flex items-center justify-between pb-3 border-b border-white/10">
+<span class="text-xs uppercase font-bold tracking-wider text-primary-fixed">Development Feedback Loop</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-xs font-bold uppercase">Active</span>
+</div>
+<!-- Loop Steps -->
+<div class="grid grid-cols-3 gap-2 text-center text-xs font-semibold">
+<div class="p-2.5 rounded-xl bg-white/10 border border-white/15 flex flex-col items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary-fixed">code</span>
+<span>1. Build</span>
+</div>
+<div class="p-2.5 rounded-xl bg-white/10 border border-white/15 flex flex-col items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-tertiary-fixed">science</span>
+<span>2. Test</span>
+</div>
+<div class="p-2.5 rounded-xl bg-white/10 border border-white/15 flex flex-col items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary-fixed">insights</span>
+<span>3. Learn</span>
+</div>
+</div>
+<!-- Progress trackers -->
+<div class="space-y-3 pt-2">
+<div>
+<div class="flex items-center justify-between text-xs font-medium text-white mb-1.5">
+<span>Empirical Testing (Active Real Use)</span>
+<span class="font-bold text-tertiary-fixed">100%</span>
+</div>
+<div class="w-full bg-white/15 rounded-full h-2 overflow-hidden">
+<div class="bg-tertiary-fixed h-full rounded-full w-full transition-all duration-500"></div>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between text-xs font-medium text-on-primary-container mb-1.5">
+<span>Pure Speculation</span>
+<span class="font-bold">0%</span>
+</div>
+<div class="w-full bg-white/15 rounded-full h-2 overflow-hidden">
+<div class="bg-error h-full rounded-full w-0"></div>
+</div>
+</div>
+</div>
+<div class="text-[12px] text-on-primary-container/90 pt-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+<span>Verified across student repositories &amp; open standards.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Putting theory into operational reality -->
+<section class="max-w-7xl mx-auto px-6 lg:px-12 py-12 md:py-16">
+<div class="p-8 md:p-12 rounded-3xl bg-surface-container-low border border-outline-variant/40 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex flex-col gap-3 max-w-2xl">
+<div class="inline-flex items-center gap-2 text-xs font-bold text-primary tracking-wider uppercase">
+<span class="material-symbols-outlined text-[18px]">rule</span>
+<span>Application in Practice</span>
+</div>
+<h2 class="text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight">Putting theory into operational reality</h2>
+<p class="text-sm md:text-base text-on-surface-variant leading-relaxed">
+            These axioms are not passive aspirational statements. Every pull request, RFC, and educational tool developed within the KnowledgeAssemble ecosystem is measured directly against this living rubric.
+          </p>
+</div>
+<div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full md:w-auto">
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-on-primary font-semibold text-sm hover:bg-primary-container transition-all shadow-sm focus:ring-2 focus:ring-primary focus:ring-offset-2" data-path="projects" href="#">
+<span>View Projects</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant text-on-surface font-semibold text-sm hover:bg-surface-container hover:border-outline transition-all focus:ring-2 focus:ring-outline" data-path="community" href="#">
+<span>Join Discussion</span>
+<span class="material-symbols-outlined text-[18px]">north_east</span>
+</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Minimal Matching Footer -->
+<footer class="w-full bg-surface-container border-t border-outline-variant/30 mt-12">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 py-10 md:py-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-6 h-6 rounded-md overflow-hidden">
+<svg fill="none" height="24" viewbox="0 0 40 40" width="24" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#f8f9ff" height="13" rx="2" stroke="#1d4ed8" stroke-width="2.5" width="13" x="4" y="4"></rect>
+<rect fill="#f8f9ff" height="13" rx="2" stroke="#1d4ed8" stroke-width="2.5" width="13" x="23" y="4"></rect>
+<rect fill="#1d4ed8" height="13" rx="2" stroke="#1d4ed8" stroke-width="2.5" width="13" x="13.5" y="23"></rect>
+<line stroke="#1d4ed8" stroke-linecap="round" stroke-width="2" x1="17" x2="23" y1="10.5" y2="10.5"></line>
+<line stroke="#1d4ed8" stroke-linecap="round" stroke-width="2" x1="10.5" x2="16.5" y1="17" y2="23"></line>
+<line stroke="#1d4ed8" stroke-linecap="round" stroke-width="2" x1="29.5" x2="23.5" y1="17" y2="23"></line>
+</svg>
+</div>
+<span class="font-bold text-base text-on-surface">KnowledgeAssemble</span>
+</div>
+<p class="text-xs text-on-surface-variant max-w-sm mt-1 leading-relaxed">
+          Open systems for knowledge, sustaining decentralized protocols and shared learning tools for students &amp; researchers worldwide.
+        </p>
+<span class="text-xs text-outline mt-1">© 2025 KnowledgeAssemble Foundation. Free &amp; Open Source under Apache-2.0.</span>
+</div>
+<nav class="flex flex-wrap items-center gap-6 text-xs font-semibold text-on-surface-variant">
+<a class="hover:text-primary transition-colors" data-path="projects" href="#">Projects</a>
+<a class="hover:text-primary transition-colors text-primary font-bold" data-path="principles" href="#">Principles</a>
+<a class="hover:text-primary transition-colors" data-path="community" href="#">Community</a>
+<a class="hover:text-primary transition-colors" data-path="about" href="#">About</a>
+<a class="inline-flex items-center gap-1 hover:text-primary transition-colors" href="https://github.com" rel="noopener noreferrer" target="_blank">
+<span>GitHub</span>
+<span class="material-symbols-outlined text-[14px]">north_east</span>
+</a>
+</nav>
+</div>
+</footer>
+</body></html>
