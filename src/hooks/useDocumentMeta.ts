@@ -41,6 +41,15 @@ export function useDocumentMeta(meta: PageMeta): void {
     setMetaTag('name', 'twitter:description', meta.description, created);
     setMetaTag('name', 'twitter:card', 'summary_large_image', created);
 
+    // The SPA rewrite serves the not-found route as HTTP 200, so `noindex` is the
+    // only signal that tells crawlers the URL has no content of its own.
+    const robots = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
+    if (meta.noIndex) {
+      setMetaTag('name', 'robots', 'noindex', created);
+    } else if (robots) {
+      robots.remove();
+    }
+
     if (siteUrl && meta.canonicalPath) {
       const url = `${siteUrl}${meta.canonicalPath}`;
       let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');

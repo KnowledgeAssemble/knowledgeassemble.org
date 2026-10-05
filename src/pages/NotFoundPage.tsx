@@ -5,8 +5,10 @@ import type { PageMeta } from '../types';
 
 export const meta: PageMeta = {
   title: 'Page not found — KnowledgeAssemble',
-  description: 'The page you requested does not exist or has moved.',
+  description:
+    'The page you requested does not exist or has moved. Head back to the homepage, or browse our principles and projects to find what you were looking for.',
   canonicalPath: '',
+  noIndex: true,
 };
 
 export default function NotFoundPage() {
