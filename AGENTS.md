@@ -11,6 +11,7 @@ flagship project: **OpenEdu**.
 | File | Authority for |
 | :--- | :--- |
 | `docs/IMPLEMENTATION_PLAN.md` | How to build. **The primary document.** |
+| `docs/TESTING_PLAN.md` | Test setup, guard tests, and the TDD boundary. |
 | `docs/KNOWLEDGEASSEMBLE-WEBSITE-V1.md` | What to build and say. Copy is verbatim here. |
 | `docs/stitch_knowledgeassemble_website_v1/assembled_knowledge_framework/DESIGN.md` | Token values, shape, spacing. |
 | `docs/stitch_knowledgeassemble_website_v1/*/code.html` | Layout reference only. |
@@ -35,7 +36,9 @@ therefore not emitted yet; set `siteUrl` to the deployed origin to enable them
 in one place. Brand assets (`public/favicon.svg`, `public/og-image.png`,
 `public/robots.txt`) are in place.
 
-Phase 8 (accessibility audit) is next.
+Phases A–C of `docs/TESTING_PLAN.md` are in place: Vitest unit, component, and
+guard tests; Playwright route and axe specs; and CI. Phase 8 (accessibility
+audit) is next.
 
 Stack is pinned in plan §4.1: **React 19 + Vite 7 + TypeScript strict +
 Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.ts`, no PostCSS) +
@@ -67,6 +70,25 @@ Violating any of these fails the phase.
 - **Accessibility is a requirement, not a pass at the end.** Skip link, one
   `<h1>` per route, sequential headings, 44x44px primary touch targets, focus
   rings everywhere, `aria-hidden` on decorative SVG.
+
+## Test-driven development
+
+**Write the failing test first** for anything with logic: hooks, config,
+content shape, and component behaviour (ARIA, conditional rendering, focus
+management). No exceptions — if the code has a branch, it gets a test.
+
+The constraints under "Hard constraints" are enforced by automated guard
+tests, not by discipline. Before changing anything that could affect one,
+confirm the guard exists; if it does not, write it and watch it fail.
+
+**Not every change is test-first.** CSS, layout, and Tailwind utilities are
+verified by the manual passes in plan Phases 8–9 — Lighthouse, axe, keyboard,
+and the eight viewports. Asserting pixel positions produces brittle tests that
+pass while the page is wrong. For visual work, state the verification you
+performed in the commit message instead.
+
+Run `npm run verify` before pushing: typecheck, unit tests, build, e2e. CI runs
+the same command and is required to pass on `main`.
 
 ## Tone
 
