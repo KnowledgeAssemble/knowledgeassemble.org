@@ -229,3 +229,50 @@ describe('static metadata fallbacks (implementation plan §4.3)', () => {
     expect(html()).not.toContain('rel="canonical"');
   });
 });
+
+describe('crawlable surface (AGENTS.md, Vercel rewrite)', () => {
+  const ROUTES = ['/', '/projects', '/principles', '/community', '/about'];
+
+  it('lists exactly the canonical routes in sitemap.xml, on the live origin', () => {
+    const sitemap = read(join(process.cwd(), 'public', 'sitemap.xml'));
+    const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+
+    expect(locations).toHaveLength(ROUTES.length);
+    for (const [i, route] of ROUTES.entries()) {
+      expect(locations[i]).toBe(`https://knowledgeassemble.org${route}`);
+    }
+    expect(new Set(locations).size, 'no duplicate URLs').toBe(ROUTES.length);
+  });
+
+  it('excludes the not-found route, which is noindex', () => {
+    const sitemap = read(join(process.cwd(), 'public', 'sitemap.xml'));
+    expect(sitemap).not.toContain('404');
+  });
+
+  it('points robots.txt at the sitemap', () => {
+    const robots = read(join(process.cwd(), 'public', 'robots.txt'));
+    expect(robots).toMatch(/^Sitemap: https:\/\/knowledgeassemble\.org\/sitemap\.xml$/m);
+  });
+
+  it('agrees with the canonical paths the pages declare', () => {
+    // A sitemap that drifts from the runtime canonical tags would tell crawlers
+    // one thing and the pages another.
+    const sitemap = read(join(process.cwd(), 'public', 'sitemap.xml'));
+    const sources = [
+      ...readdirSync(join(SRC, 'pages')).map((file) => read(join(SRC, 'pages', file))),
+      // The homepage's canonicalPath lives in site.ts, not in a page module.
+      read(join(SRC, 'config', 'site.ts')),
+    ];
+    const paths = sources
+      .flatMap((contents) => [...contents.matchAll(/canonicalPath: '([^']+)'/g)].map((m) => m[1]))
+      // The not-found route declares '' so it emits no canonical at all.
+      .filter(Boolean)
+      .sort();
+
+    const listed = [...sitemap.matchAll(/<loc>https:\/\/knowledgeassemble\.org([^<]*)<\/loc>/g)]
+      .map((m) => m[1])
+      .sort();
+
+    expect(listed).toEqual(paths);
+  });
+});

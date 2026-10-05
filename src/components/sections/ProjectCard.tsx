@@ -27,8 +27,9 @@ const statusVariant: Record<ProjectStatus, 'neutral' | 'verified'> = {
  * interactive content.
  */
 export default function ProjectCard({ project, ctaLabel, hideCta = false }: ProjectCardProps) {
-  const externalLabel = ctaLabel ?? `Explore ${project.name}`;
-  const internalLabel = ctaLabel ?? `Explore ${project.name}`;
+  // One label for both cases. It previously fell back to a generic "Learn more",
+  // which told a screen-reader user nothing about where the link went.
+  const ctaText = ctaLabel ?? `Explore ${project.name}`;
   const externalUrl = project.externalUrl;
 
   return (
@@ -59,14 +60,14 @@ export default function ProjectCard({ project, ctaLabel, hideCta = false }: Proj
         <div className="mt-6 border-t border-rule pt-5">
           {externalUrl ? (
             <ExternalLink href={externalUrl} className="text-body-md">
-              {externalLabel}
+              {ctaText}
             </ExternalLink>
           ) : (
             <Link
               to="/projects"
               className="focus-ring inline-flex min-h-11 items-center gap-1.5 rounded-control text-body-md font-medium text-accent transition-colors hover:text-accent-hover"
             >
-              <span>{internalLabel}</span>
+              <span>{ctaText}</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           )}

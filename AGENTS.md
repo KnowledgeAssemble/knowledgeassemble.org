@@ -29,7 +29,9 @@ not-found route through a `RootLayout` that renders `SkipLink`, `SiteHeader`,
 `src/content/`, external URLs in `src/config/links.ts`, and site metadata in
 `src/config/site.ts`. Each page module exports `meta` and calls
 `useDocumentMeta`, which sets title, description, OpenGraph/Twitter tags, and
-absolute canonical/`og:url`.
+absolute canonical/`og:url`. `public/sitemap.xml` lists the five canonical
+routes and `public/robots.txt` points at it, because the `200`-for-everything
+rewrite leaves the URL space otherwise unbounded.
 
 `siteUrl` in `src/config/site.ts` is the live apex
 `https://knowledgeassemble.org` (§10 Q3 resolved), so canonical and `og:url`
@@ -61,11 +63,17 @@ Violating any of these fails the phase.
 - **No gradients, no drop shadows, no stock imagery, no dark/light theme
   switching, no pill/stadium radii, no circular avatars.** Radii are 4px
   (controls) and 8px (panels).
-- **External URLs only from `src/config/links.ts`.** Never inline one. Never
-  invent a domain: OpenEdu is `github.com/KnowledgeAssembly/open-edu`;
-  `openedu.org` is wrong and does not resolve.
-- **`knowledgeassemble.org` is not registered.** Do not ship canonical or
-  `og:url` tags pointing at it.
+- **External URLs only from the config layer:** `src/config/links.ts` for
+  third-party destinations, and `src/config/site.ts` for the site's own origin.
+  Never inline one anywhere else. Never invent a domain: OpenEdu is
+  `github.com/KnowledgeAssembly/open-edu`; `openedu.org` is wrong and does not
+  resolve.
+- **Canonical and `og:url` are per-route and runtime-injected.** `siteUrl` in
+  `src/config/site.ts` is the live apex `https://knowledgeassemble.org`. Do not
+  put a static `<link rel="canonical">` in `index.html`: `vercel.json` rewrites
+  every path to `index.html` with a `200`, so a static tag would claim the
+  homepage on every deep link. `www` does not resolve; if it is ever added it
+  must 301 to the apex.
 - **Principle numbers render as `01`–`07`.** The `13.x` values are PRD section
   references and never reach the UI.
 - **Accessibility is a requirement, not a pass at the end.** Skip link, one

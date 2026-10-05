@@ -24,4 +24,21 @@ describe('site config', () => {
   it('names the site', () => {
     expect(siteName).toBe('KnowledgeAssemble');
   });
+
+  it('joins origin and path into exactly one absolute URL', () => {
+    // `useDocumentMeta` builds canonical as `${siteUrl}${canonicalPath}`. The
+    // origin carries no trailing slash, so the homepage's path must supply
+    // exactly one, or the tag emits `https://knowledgeassemble.org//`.
+    for (const [path, expected] of [
+      ['/', 'https://knowledgeassemble.org/'],
+      ['/projects', 'https://knowledgeassemble.org/projects'],
+    ] as const) {
+      expect(`${siteUrl}${path}`).toBe(expected);
+      expect(`${siteUrl}${path}`).not.toContain('org//');
+    }
+  });
+
+  it('gives every route a leading-slash path', () => {
+    expect(defaultMeta.canonicalPath.startsWith('/')).toBe(true);
+  });
 });

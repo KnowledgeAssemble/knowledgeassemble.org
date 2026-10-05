@@ -2,6 +2,9 @@ import { expect, test } from '@playwright/test';
 
 const ROUTES = ['/', '/projects', '/principles', '/community', '/about'];
 
+/** Mirrors `siteUrl` in src/config/site.ts; sitemap URLs resolve against it. */
+const ORIGIN = 'https://knowledgeassemble.org';
+
 test.describe('SEO and performance pass (implementation plan §10)', () => {
   test('canonical and og:url are absolute on every route', async ({ page }) => {
     for (const route of ROUTES) {
@@ -54,5 +57,28 @@ test.describe('SEO and performance pass (implementation plan §10)', () => {
       ? Number.parseFloat(duration) / 1000
       : Number.parseFloat(duration);
     expect(seconds).toBeLessThan(0.01);
+  });
+
+  // The rewrite makes every path a 200, so the sitemap is the only thing that
+  // tells a crawler the real inventory. It must be served, parse, and resolve.
+  // The URLs inside are absolute against the live origin, not baseURL, because
+  // that is what a crawler resolves.
+  test('serves a sitemap covering every canonical route', async ({ request }) => {
+    const response = await request.get('/sitemap.xml');
+    expect(response.status()).toBe(200);
+    expect(response.headers()['content-type']).toContain('xml');
+
+    const body = await response.text();
+    const locations = [...body.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+
+    expect(locations.sort()).toEqual(
+      [...ROUTES].sort().map((route) => `${ORIGIN}${route}`),
+    );
+  });
+
+  test('serves robots.txt pointing at that sitemap', async ({ request }) => {
+    const response = await request.get('/robots.txt');
+    expect(response.status()).toBe(200);
+    expect(await response.text()).toContain(`Sitemap: ${ORIGIN}/sitemap.xml`);
   });
 });
