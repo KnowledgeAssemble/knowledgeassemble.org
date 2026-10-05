@@ -1,0 +1,200 @@
+/*
+ * Motion & visual layer (spec docs/MOTION-WEBSITE-SPEC.md).
+ *
+ * Motion tokens live here rather than in the @theme block: that block is the
+ * single source of truth for colour, typography, and shape, and Tailwind maps
+ * its namespaces to utilities. These are consumed only by this file and the
+ * visual components. Colours still come from @theme via var(--color-*).
+ */
+:root {
+  --motion-micro: 180ms; /* spec §4.1 micro interaction */
+  --motion-small: 320ms; /* spec §4.1 small transition  */
+  --motion-reveal: 500ms; /* spec §4.1 section reveal    */
+  --motion-line: 700ms; /* spec §4.1 diagram assembly  */
+  --motion-ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ---------------------------------------------------------------------------
+ * Scroll reveal (spec §32).
+ *
+ * The resting state of every element is its final, fully drawn state. The
+ * `pending` state exists only as an attribute the hook applies in the browser
+ * before paint; it is never present in JSX or the prerendered HTML, so no-JS
+ * readers, crawlers, and a failed bundle always get the finished content.
+ * ------------------------------------------------------------------------- */
+[data-reveal='pending'] {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+[data-reveal='visible'] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-reveal='pending'],
+[data-reveal='visible'] {
+  transition:
+    opacity var(--motion-reveal) var(--motion-ease-out),
+    transform var(--motion-reveal) var(--motion-ease-out);
+}
+
+/* ---------------------------------------------------------------------------
+ * Line drawing: `pathLength={1}` normalises the path, so a single dash unit
+ * animates the whole line (spec §17). Final state is drawn.
+ * ------------------------------------------------------------------------- */
+.vis-line,
+.vis-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+[data-reveal='pending'] .vis-draw {
+  stroke-dashoffset: 1;
+}
+
+[data-reveal='visible'] .vis-draw {
+  animation: vis-draw var(--motion-line) var(--motion-ease-out) both;
+}
+
+@keyframes vis-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Hero assembly (spec §12). Pure CSS keyframes, so the render-blocking
+ * stylesheet applies them from the first paint and there is no flash. The
+ * `.hero-played` class is added by the read-only head script / the hero
+ * component to stop the sequence replaying within a session.
+ * ------------------------------------------------------------------------- */
+[data-hero-seq] {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+[data-hero-seq='1'] {
+  animation: vis-hero-node 400ms var(--motion-ease-out) backwards;
+}
+
+[data-hero-seq='2'] {
+  animation: vis-hero-line 700ms var(--motion-ease-out) 300ms backwards;
+}
+
+[data-hero-seq='3'] {
+  animation: vis-hero-converge 600ms var(--motion-ease-in-out) 700ms backwards;
+}
+
+[data-hero-seq='4'] {
+  animation: vis-hero-resolve 400ms var(--motion-ease-out) 1200ms backwards;
+}
+
+.hero-played [data-hero-seq] {
+  animation: none;
+}
+
+@keyframes vis-hero-node {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes vis-hero-line {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes vis-hero-converge {
+  from {
+    transform: translate(0, 8px);
+  }
+}
+
+@keyframes vis-hero-resolve {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Knowledge Flow particle (spec §17). Offset along the drawn path; only runs
+ * once the section is revealed, then holds its final position.
+ * ------------------------------------------------------------------------- */
+.vis-particle {
+  opacity: 0;
+  offset-path: path('M 24 84 L 78 48 L 132 78 L 186 44 L 240 76 L 296 44');
+  offset-rotate: 0deg;
+}
+
+[data-reveal='visible'] .vis-particle {
+  animation: vis-particle-run 5s var(--motion-ease-in-out) forwards;
+}
+
+@keyframes vis-particle-run {
+  0% {
+    opacity: 0;
+    offset-distance: 0%;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    offset-distance: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Navigation active indicator (spec §30). The underline animates into place
+ * via a per-link pseudo-element; no position-measuring machinery.
+ * ------------------------------------------------------------------------- */
+.vis-nav-link {
+  position: relative;
+}
+
+.vis-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  height: 1px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-small) var(--motion-ease-out);
+}
+
+.vis-nav-link[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+/* ---------------------------------------------------------------------------
+ * Reduced motion (spec §33, plan §4.6). The global reset in index.css zeroes
+ * durations and delays; this adds only what it cannot express.
+ * ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  /* A line that never animates must still be fully drawn. */
+  [data-reveal='pending'],
+  .vis-line,
+  .vis-draw {
+    stroke-dashoffset: 0 !important;
+  }
+
+  /* The particle is motion, not information: remove it, do not make it
+     instant. Spec §33: no continuously moving element. */
+  .vis-particle {
+    display: none !important;
+  }
+}

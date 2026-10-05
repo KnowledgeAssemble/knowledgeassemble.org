@@ -8,6 +8,7 @@ import ExternalLink from '../components/common/ExternalLink';
 import Section from '../components/common/Section';
 import PageContainer from '../components/layout/PageContainer';
 import ProjectCard from '../components/sections/ProjectCard';
+import ProjectVisual from '../components/visuals/ProjectVisual';
 
 const architecture = [
   {
@@ -68,13 +69,18 @@ export default function ProjectsPage() {
           title={flagshipProject.name}
           contentClassName="mt-10"
         >
-          <div className="rounded-panel border border-rule bg-surface p-6 sm:p-8">
+          <div className="group rounded-panel border border-rule bg-surface p-6 sm:p-8">
             <div className="flex flex-wrap items-center gap-3">
               <Badge variant="verified">{flagshipProject.status}</Badge>
               {flagshipProject.categories.map((category) => (
                 <Badge key={category}>{category}</Badge>
               ))}
             </div>
+
+            <ProjectVisual
+              projectId="openedu"
+              className="vis-project mt-6 h-16 w-auto transition-transform duration-200 group-hover:translate-x-1 group-focus-within:translate-x-1"
+            />
 
             <p className="mt-6 max-w-3xl text-body-lg text-ink-secondary">
               {flagshipProject.description}
@@ -113,7 +119,7 @@ export default function ProjectsPage() {
         contentClassName="mt-10 grid gap-6 md:grid-cols-2"
       >
         {otherProjects.map((project) => (
-          <ProjectCard key={project.id} project={project} hideCta />
+          <ProjectCard key={project.id} project={project} hideCta withVisual />
         ))}
       </Section>
 

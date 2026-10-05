@@ -74,6 +74,13 @@ function documentFor(routeHtml: string, head: string): string {
     ${head}
     <meta name="theme-color" content="#FBFBF9" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      try {
+        if (sessionStorage.getItem('ka:hero-played') === '1') {
+          document.documentElement.classList.add('hero-played');
+        }
+      } catch (e) {}
+    </script>
     <link rel="stylesheet" crossorigin href="${cssHref}" />
   </head>
   <body>

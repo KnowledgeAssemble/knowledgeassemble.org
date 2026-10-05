@@ -3,6 +3,7 @@ import type { ProjectItem, ProjectStatus } from '../../types';
 import Badge from '../common/Badge';
 import ExternalLink from '../common/ExternalLink';
 import { ArrowRight } from '../common/icons';
+import ProjectVisual from '../visuals/ProjectVisual';
 
 type ProjectCardProps = {
   project: ProjectItem;
@@ -13,6 +14,8 @@ type ProjectCardProps = {
    * `/projects` is a dead end.
    */
   hideCta?: boolean;
+  /** Render the project's decorative visual above the tagline (projects page). */
+  withVisual?: boolean;
 };
 
 const statusVariant: Record<ProjectStatus, 'neutral' | 'verified'> = {
@@ -26,14 +29,19 @@ const statusVariant: Record<ProjectStatus, 'neutral' | 'verified'> = {
  * interactive; a single link carries the action, so there is no nested
  * interactive content.
  */
-export default function ProjectCard({ project, ctaLabel, hideCta = false }: ProjectCardProps) {
+export default function ProjectCard({
+  project,
+  ctaLabel,
+  hideCta = false,
+  withVisual = false,
+}: ProjectCardProps) {
   // One label for both cases. It previously fell back to a generic "Learn more",
   // which told a screen-reader user nothing about where the link went.
   const ctaText = ctaLabel ?? `Explore ${project.name}`;
   const externalUrl = project.externalUrl;
 
   return (
-    <article className="flex h-full flex-col justify-between rounded-panel border border-rule bg-surface p-6 transition-colors hover:border-rule-interactive">
+    <article className="group flex h-full flex-col justify-between rounded-panel border border-rule bg-surface p-6 transition-colors hover:border-rule-interactive">
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between gap-3">
           <Badge variant={statusVariant[project.status]}>{project.status}</Badge>
@@ -41,6 +49,15 @@ export default function ProjectCard({ project, ctaLabel, hideCta = false }: Proj
             <span className="font-mono text-label-sm text-ink-tertiary">{project.version}</span>
           ) : null}
         </div>
+
+        {withVisual ? (
+          <div className="h-16">
+            <ProjectVisual
+              projectId={project.id}
+              className="vis-project h-16 w-auto transition-transform duration-200 group-hover:translate-x-1 group-focus-within:translate-x-1"
+            />
+          </div>
+        ) : null}
 
         <div className="flex flex-col gap-2">
           <h3 className="text-headline-sm text-ink">{project.name}</h3>

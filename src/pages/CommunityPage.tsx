@@ -6,6 +6,7 @@ import Button from '../components/common/Button';
 import Section from '../components/common/Section';
 import PageContainer from '../components/layout/PageContainer';
 import CommunityCard from '../components/sections/CommunityCard';
+import CommunityAssembly from '../components/visuals/CommunityAssembly';
 
 export const meta: PageMeta = {
   title: 'Community — KnowledgeAssemble',
@@ -48,11 +49,14 @@ export default function CommunityPage() {
       <Section
         eyebrow="Ways to take part"
         title="Five ways to contribute"
-        contentClassName="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        contentClassName="mt-10"
       >
-        {communityTracks.map((track) => (
-          <CommunityCard key={track.id} track={track} />
-        ))}
+        <CommunityAssembly className="mb-10" />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {communityTracks.map((track) => (
+            <CommunityCard key={track.id} track={track} />
+          ))}
+        </div>
       </Section>
 
       <Section

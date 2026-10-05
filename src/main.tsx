@@ -5,6 +5,7 @@ import '@fontsource/ibm-plex-sans/600.css'
 import '@fontsource/jetbrains-mono/400.css'
 import '@fontsource/jetbrains-mono/500.css'
 import './styles/index.css'
+import './styles/visuals.css'
 import App from './App'
 
 const container = document.getElementById('root')

@@ -9,6 +9,8 @@ import Section from '../components/common/Section';
 import PageContainer from '../components/layout/PageContainer';
 import KnowledgeFlow from '../components/sections/KnowledgeFlow';
 import ProjectCard from '../components/sections/ProjectCard';
+import KnowledgeAssembly from '../components/visuals/KnowledgeAssembly';
+import KnowledgeFlowDiagram from '../components/visuals/KnowledgeFlowDiagram';
 
 const tenets = [
   {
@@ -45,23 +47,26 @@ export default function HomePage() {
       {/* Hero */}
       <section className="pt-16 pb-14 sm:pt-24 sm:pb-20">
         <PageContainer>
-          <div className="flex max-w-3xl flex-col items-start gap-8">
-            <h1 className="text-display-lg-mobile text-ink sm:text-display-lg">
-              Building open systems for assembling knowledge.
-            </h1>
-            <p className="text-body-lg text-ink-secondary">
-              KnowledgeAssemble is an open-source organization exploring better ways to create,
-              connect, explore, and share knowledge through software, educational tools, and
-              experimental learning systems.
-            </p>
-            <div className="flex flex-wrap items-center gap-4">
-              <Button to="/projects" withArrow>
-                Explore projects
-              </Button>
-              <Button href={LINKS.githubOrg} variant="outline">
-                GitHub
-              </Button>
+          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="flex max-w-3xl flex-col items-start gap-8">
+              <h1 className="text-display-lg-mobile text-ink sm:text-display-lg">
+                Building open systems for assembling knowledge.
+              </h1>
+              <p className="text-body-lg text-ink-secondary">
+                KnowledgeAssemble is an open-source organization exploring better ways to create,
+                connect, explore, and share knowledge through software, educational tools, and
+                experimental learning systems.
+              </p>
+              <div className="flex flex-wrap items-center gap-4">
+                <Button to="/projects" withArrow>
+                  Explore projects
+                </Button>
+                <Button href={LINKS.githubOrg} variant="outline">
+                  GitHub
+                </Button>
+              </div>
             </div>
+            <KnowledgeAssembly />
           </div>
         </PageContainer>
       </section>
@@ -73,6 +78,7 @@ export default function HomePage() {
         lede="Knowledge is often trapped inside platforms, formats, applications, and institutional silos. We explore systems that make knowledge more portable, composable, accessible, and useful."
         bordered
       >
+        <KnowledgeFlowDiagram className="mb-10" />
         <KnowledgeFlow />
       </Section>
 
