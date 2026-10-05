@@ -1,2 +1,6 @@
 User-agent: *
 Allow: /
+
+# The SPA rewrite serves every path with a 200, so the URL space is unbounded.
+# This points crawlers at the five routes that actually have content.
+Sitemap: https://knowledgeassemble.org/sitemap.xml

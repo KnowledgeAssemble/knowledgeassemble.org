@@ -28,10 +28,34 @@ describe('useDocumentMeta', () => {
     expect(metaContent('meta[name="twitter:card"]')).toBe('summary_large_image');
   });
 
-  it('suppresses canonical and og:url while siteUrl is empty', () => {
+  it('emits absolute canonical and og:url using the configured origin', () => {
     renderHook(() => useDocumentMeta(baseMeta));
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
+      'https://knowledgeassemble.org/test',
+    );
+    expect(metaContent('meta[property="og:url"]')).toBe('https://knowledgeassemble.org/test');
+  });
+
+  it('suppresses canonical and og:url when the route has no canonical path', () => {
+    renderHook(() => useDocumentMeta({ ...baseMeta, canonicalPath: '' }));
     expect(document.head.querySelector('link[rel="canonical"]')).toBeNull();
     expect(document.head.querySelector('meta[property="og:url"]')).toBeNull();
+  });
+
+  it('suppresses canonical and og:url when siteUrl is unset', async () => {
+    vi.resetModules();
+    vi.doMock('../config/site', async (importOriginal) => {
+      const actual = await importOriginal<typeof import('../config/site')>();
+      return { ...actual, siteUrl: '' };
+    });
+
+    const { useDocumentMeta: hookWithoutSiteUrl } = await import('./useDocumentMeta');
+    renderHook(() => hookWithoutSiteUrl(baseMeta));
+    expect(document.head.querySelector('link[rel="canonical"]')).toBeNull();
+    expect(document.head.querySelector('meta[property="og:url"]')).toBeNull();
+
+    vi.doUnmock('../config/site');
+    vi.resetModules();
   });
 
   it('restores the title and removes created tags on unmount', () => {
@@ -59,24 +83,5 @@ describe('useDocumentMeta', () => {
 
     rerender({ meta: baseMeta });
     expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
-  });
-
-  it('emits absolute canonical and og:url when siteUrl is configured', async () => {
-    vi.resetModules();
-    vi.doMock('../config/site', async (importOriginal) => {
-      const actual = await importOriginal<typeof import('../config/site')>();
-      return { ...actual, siteUrl: 'https://example.test' };
-    });
-
-    const { useDocumentMeta: hookWithSiteUrl } = await import('./useDocumentMeta');
-    renderHook(() => hookWithSiteUrl(baseMeta));
-
-    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
-      'https://example.test/test',
-    );
-    expect(metaContent('meta[property="og:url"]')).toBe('https://example.test/test');
-
-    vi.doUnmock('../config/site');
-    vi.resetModules();
   });
 });

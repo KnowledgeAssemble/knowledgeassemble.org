@@ -11,8 +11,9 @@
     <meta name="theme-color" content="#FBFBF9" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-    <!-- Static OpenGraph/Twitter fallbacks. Canonical and og:url are wired at
-         runtime by useDocumentMeta once siteUrl is set (plan §4.3, §10 Q3). -->
+    <!-- Static OpenGraph/Twitter fallbacks. Absolute URLs because crawlers
+         require an origin; the per-route canonical and og:url are wired by
+         useDocumentMeta at runtime. -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="KnowledgeAssemble" />
     <meta property="og:title" content="KnowledgeAssemble — Open Systems for Knowledge" />
@@ -20,14 +21,14 @@
       property="og:description"
       content="KnowledgeAssemble builds open-source tools and systems for creating, connecting, exploring, and sharing knowledge."
     />
-    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image" content="https://knowledgeassemble.org/og-image.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="KnowledgeAssemble — Open Systems for Knowledge" />
     <meta
       name="twitter:description"
       content="KnowledgeAssemble builds open-source tools and systems for creating, connecting, exploring, and sharing knowledge."
     />
-    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:image" content="https://knowledgeassemble.org/og-image.png" />
   </head>
   <body>
     <!--

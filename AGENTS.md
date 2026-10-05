@@ -22,23 +22,26 @@ like errors otherwise.
 
 ## Current state
 
-Phases 1–7 are committed. `src/App.tsx` routes the five pages plus a not-found
-route through a `RootLayout` that renders `SkipLink`, `SiteHeader`, `<main>`,
-and `SiteFooter`. Pages are built on the design tokens in
+Phases 1–11 are implemented. `src/App.tsx` routes the five pages plus a
+not-found route through a `RootLayout` that renders `SkipLink`, `SiteHeader`,
+`<main>`, and `SiteFooter`. Pages are built on the design tokens in
 `src/styles/index.css` (imported from `src/main.tsx`); content lives in
 `src/content/`, external URLs in `src/config/links.ts`, and site metadata in
 `src/config/site.ts`. Each page module exports `meta` and calls
-`useDocumentMeta`, which sets title, description, and OpenGraph/Twitter tags.
+`useDocumentMeta`, which sets title, description, OpenGraph/Twitter tags, and
+absolute canonical/`og:url`. `public/sitemap.xml` lists the five canonical
+routes and `public/robots.txt` points at it, because the `200`-for-everything
+rewrite leaves the URL space otherwise unbounded.
 
-`siteUrl` in `src/config/site.ts` is deliberately empty because
-`knowledgeassemble.org` is unregistered (§10 Q3). Canonical and `og:url` are
-therefore not emitted yet; set `siteUrl` to the deployed origin to enable them
-in one place. Brand assets (`public/favicon.svg`, `public/og-image.png`,
-`public/robots.txt`) are in place.
+`siteUrl` in `src/config/site.ts` is the live apex
+`https://knowledgeassemble.org` (§10 Q3 resolved), so canonical and `og:url`
+are absolute on every route. `www` does not resolve; if it is ever added it
+must 301 to the apex. Brand assets (`public/favicon.svg`,
+`public/og-image.png`, `public/robots.txt`) are in place.
 
-Phases A–C of `docs/TESTING_PLAN.md` are in place: Vitest unit, component, and
-guard tests; Playwright route and axe specs; and CI. Phase 8 (accessibility
-audit) is next.
+Automated verification lives in `docs/TESTING_PLAN.md`: Vitest unit, component,
+and guard tests; Playwright route, axe, responsive, and SEO specs; and CI,
+which runs on every PR.
 
 Stack is pinned in plan §4.1: **React 19 + Vite 7 + TypeScript strict +
 Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.ts`, no PostCSS) +
@@ -60,11 +63,17 @@ Violating any of these fails the phase.
 - **No gradients, no drop shadows, no stock imagery, no dark/light theme
   switching, no pill/stadium radii, no circular avatars.** Radii are 4px
   (controls) and 8px (panels).
-- **External URLs only from `src/config/links.ts`.** Never inline one. Never
-  invent a domain: OpenEdu is `github.com/KnowledgeAssembly/open-edu`;
-  `openedu.org` is wrong and does not resolve.
-- **`knowledgeassemble.org` is not registered.** Do not ship canonical or
-  `og:url` tags pointing at it.
+- **External URLs only from the config layer:** `src/config/links.ts` for
+  third-party destinations, and `src/config/site.ts` for the site's own origin.
+  Never inline one anywhere else. Never invent a domain: OpenEdu is
+  `github.com/KnowledgeAssembly/open-edu`; `openedu.org` is wrong and does not
+  resolve.
+- **Canonical and `og:url` are per-route and runtime-injected.** `siteUrl` in
+  `src/config/site.ts` is the live apex `https://knowledgeassemble.org`. Do not
+  put a static `<link rel="canonical">` in `index.html`: `vercel.json` rewrites
+  every path to `index.html` with a `200`, so a static tag would claim the
+  homepage on every deep link. `www` does not resolve; if it is ever added it
+  must 301 to the apex.
 - **Principle numbers render as `01`–`07`.** The `13.x` values are PRD section
   references and never reach the UI.
 - **Accessibility is a requirement, not a pass at the end.** Skip link, one
@@ -106,15 +115,18 @@ Never force-push, rewrite history, or amend a pushed commit.
 
 ## Open blockers
 
-Do not invent answers to these; they are organizational decisions (§10):
+None blocking. Resolved decisions:
 
-- Domain `knowledgeassemble.org` is **unregistered** — blocks Phase 7 canonical URLs.
-- **CSR vs prerender** sign-off — affects Phase 2 (§4.2).
-- **Contact link** — include only if a real destination exists; do not invent an email.
+- Domain `knowledgeassemble.org` is **registered and live** at the apex on Vercel
+  (§10 Q3); `siteUrl` is set, so canonical and `og:url` are absolute.
+- **Deploy target is Vercel** (§10 Q4), so `vercel.json` is the SPA rewrite. If
+  the host ever changes, that rule must be migrated — a stale `vercel.json` on
+  another host means deep links silently 404.
+- **CSR is accepted** (§10 Q5) with the `<noscript>` shell mitigation, documented
+  in `README.md` (§4.2).
 
-Resolved: deploy target is **Vercel** (§10 Q4), so `vercel.json` is the SPA
-rewrite. If the host ever changes, that rule must be migrated — a stale
-`vercel.json` on another host means deep links silently 404.
+The **Contact link** stays omitted until a real destination exists (PRD §11). Do
+not invent an email.
 
 ## Screenshots
 

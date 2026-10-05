@@ -141,6 +141,18 @@ describe('guard predicates', () => {
       expect(usesRingUtility('focus-ring')).toBe(false);
     });
   });
+
+  describe('hasInlineUrl', () => {
+    it('detects http(s) URLs', () => {
+      expect(hasInlineUrl('https://example.test')).toBe(true);
+      expect(hasInlineUrl('see http://example.test for more')).toBe(true);
+    });
+
+    it('ignores relative paths and anchors', () => {
+      expect(hasInlineUrl('/projects')).toBe(false);
+      expect(hasInlineUrl('#main-content')).toBe(false);
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -182,11 +194,85 @@ describe('visual constraints (AGENTS.md)', () => {
 });
 
 describe('external URLs (implementation plan §11, Phase 11)', () => {
-  it('are centralized in src/config/links.ts', () => {
-    const linksFile = join('src', 'config', 'links.ts');
+  it('are centralized in the config layer', () => {
+    // External destinations live in links.ts; the site's own origin lives in
+    // site.ts (§5.1: LINKS deliberately holds no self-link).
+    const allowed = new Set([join('src', 'config', 'links.ts'), join('src', 'config', 'site.ts')]);
     const offenders = codeFiles.filter(
-      (file) => label(file) !== linksFile && hasInlineUrl(read(file)),
+      (file) => !allowed.has(label(file)) && hasInlineUrl(read(file)),
     );
     expect(offenders.map(label)).toEqual([]);
+  });
+});
+
+describe('reduced motion (implementation plan §6.1)', () => {
+  it('resets motion globally in styles/index.css', () => {
+    const css = read(join(SRC, 'styles', 'index.css'));
+    expect(css).toContain('prefers-reduced-motion: reduce');
+    expect(css).toContain('scroll-behavior: auto');
+  });
+});
+
+describe('static metadata fallbacks (implementation plan §4.3)', () => {
+  const html = () => read(join(process.cwd(), 'index.html'));
+
+  it('declares favicon, theme-color, and an absolute og:image', () => {
+    const contents = html();
+    expect(contents).toContain('rel="icon"');
+    expect(contents).toContain('name="theme-color"');
+    expect(contents).toMatch(
+      /property="og:image" content="https:\/\/knowledgeassemble\.org\/og-image\.png"/,
+    );
+  });
+
+  it('emits no static canonical, since Vercel serves index.html for every route', () => {
+    expect(html()).not.toContain('rel="canonical"');
+  });
+});
+
+describe('crawlable surface (AGENTS.md, Vercel rewrite)', () => {
+  const ROUTES = ['/', '/projects', '/principles', '/community', '/about'];
+
+  it('lists exactly the canonical routes in sitemap.xml, on the live origin', () => {
+    const sitemap = read(join(process.cwd(), 'public', 'sitemap.xml'));
+    const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+
+    expect(locations).toHaveLength(ROUTES.length);
+    for (const [i, route] of ROUTES.entries()) {
+      expect(locations[i]).toBe(`https://knowledgeassemble.org${route}`);
+    }
+    expect(new Set(locations).size, 'no duplicate URLs').toBe(ROUTES.length);
+  });
+
+  it('excludes the not-found route, which is noindex', () => {
+    const sitemap = read(join(process.cwd(), 'public', 'sitemap.xml'));
+    expect(sitemap).not.toContain('404');
+  });
+
+  it('points robots.txt at the sitemap', () => {
+    const robots = read(join(process.cwd(), 'public', 'robots.txt'));
+    expect(robots).toMatch(/^Sitemap: https:\/\/knowledgeassemble\.org\/sitemap\.xml$/m);
+  });
+
+  it('agrees with the canonical paths the pages declare', () => {
+    // A sitemap that drifts from the runtime canonical tags would tell crawlers
+    // one thing and the pages another.
+    const sitemap = read(join(process.cwd(), 'public', 'sitemap.xml'));
+    const sources = [
+      ...readdirSync(join(SRC, 'pages')).map((file) => read(join(SRC, 'pages', file))),
+      // The homepage's canonicalPath lives in site.ts, not in a page module.
+      read(join(SRC, 'config', 'site.ts')),
+    ];
+    const paths = sources
+      .flatMap((contents) => [...contents.matchAll(/canonicalPath: '([^']+)'/g)].map((m) => m[1]))
+      // The not-found route declares '' so it emits no canonical at all.
+      .filter(Boolean)
+      .sort();
+
+    const listed = [...sitemap.matchAll(/<loc>https:\/\/knowledgeassemble\.org([^<]*)<\/loc>/g)]
+      .map((m) => m[1])
+      .sort();
+
+    expect(listed).toEqual(paths);
   });
 });

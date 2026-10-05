@@ -229,7 +229,7 @@ PRD §22 states: *"Do not make accessibility dependent on JavaScript."* A React 
 
 Five client-rendered routes need distinct `<title>`, meta description, canonical, and OpenGraph tags. Implementation:
 
-- `src/config/site.ts` exports `siteUrl` (the deployed origin) — **required**, since canonical and `og:url` must be absolute. Note that `knowledgeassemble.org` is **not yet registered** (§10 Q3); until it is, use a temporary host or defer canonical wiring to Phase 7.
+- `src/config/site.ts` exports `siteUrl`, **now set to the live apex origin `https://knowledgeassemble.org`** (§10 Q3 resolved). Canonical and `og:url` are therefore absolute on every route.
 - Each route exports `const meta: PageMeta = { title, description, canonicalPath }` from its page module.
 - A small `useDocumentMeta(meta)` hook (`src/hooks/useDocumentMeta.ts`, ~30 lines, no dependency) sets `document.title`, `meta[name=description]`, `link[rel=canonical]`, and the `og:` / `twitter:` tags on mount and cleans up on unmount.
 - Default OG tags, `og:image` (`/og-image.png`), favicon, and theme-color live in `index.html` as static fallbacks.
@@ -353,11 +353,11 @@ export const LINKS = {
 
 **This repository is public and MIT-licensed.** The repo is named `knowledgeassemble.org` to match the production domain, so `gh api repos/KnowledgeAssembly/knowledgeassemble.org` and a bare `curl` both return 200. License and visibility questions are closed (§10 Q2, Q6).
 
-**The repo name is a URL, not a typo.** It expresses intent for the production domain `knowledgeassemble.org`, which is **not yet registered** (§10 Q3). Do not "normalize" it to `knowledgeassemble-website`, and do not ship canonical tags pointing at the unregistered domain. Note that the repo name, the GitHub org (`KnowledgeAssembly`), and the brand (`KnowledgeAssemble`) are three distinct strings — verify each against this registry rather than assuming they match.
+**The repo name is a URL, not a typo.** It matches the production domain `knowledgeassemble.org`, which is **registered and live** (§10 Q3 resolved). Do not "normalize" it to `knowledgeassemble-website`. Note that the repo name, the GitHub org (`KnowledgeAssembly`), and the brand (`KnowledgeAssemble`) are three distinct strings — verify each against this registry rather than assuming they match.
 
 **`LINKS` contains no self-link.** `githubRepo` is the repository; the deployed site URL is a separate concern owned by `siteUrl` (§4.3), since it is unresolved until the domain is registered. Do not add a `site` entry to `LINKS` that duplicates it.
 
-Every consumer imports from `LINKS`. A `rg -n 'https?://' src/` check in Phase 11 must return **zero** matches outside this file — PRD §26 forbids scattered URLs, and §8 makes it a Definition-of-Done item.
+Every consumer imports from `LINKS`. A `rg -n 'https?://' src/` check in Phase 11 must return matches only in this file and `src/config/site.ts`, which owns the site's own origin (§4.3) — test files hold fixtures and are out of scope. PRD §26 forbids scattered URLs, and §8 makes this a Definition-of-Done item.
 
 ### 5.2 Content Typings (`src/types/index.ts`)
 
@@ -552,7 +552,7 @@ Content data files land in Phase 5, after the shell renders, so page structure i
 
 #### Phase 7: Metadata Wiring
 - Implement `useDocumentMeta` (§4.3) and export `meta` from all 6 page modules.
-- Populate `siteUrl`, page titles, and meta descriptions from PRD §27:
+- `siteUrl` is set to the live apex `https://knowledgeassemble.org` (§10 Q3 resolved). Page titles and meta descriptions come from PRD §27:
   - Homepage title: `KnowledgeAssemble — Open Systems for Knowledge`
   - Homepage description: `KnowledgeAssemble builds open-source tools and systems for creating, connecting, exploring, and sharing knowledge.`
 - Wire static OG/favicon/theme-color fallbacks in `index.html`.
@@ -581,7 +581,7 @@ Content data files land in Phase 5, after the shell renders, so page structure i
 #### Phase 11: Build, Deploy Target Verification & Definition of Done
 - `npm run build` and `npx tsc --noEmit` — zero errors, zero warnings.
 - `npm run preview`, then re-verify all 5 routes plus a hard refresh on a deep link against the **production** build.
-- `rg -n 'https?://' src/` returns matches only in `src/config/links.ts`.
+- `rg -n 'https?://' src/` returns matches only in `src/config/links.ts` and `src/config/site.ts` (the deployed origin); test files are out of scope.
 - External link check: every URL in `LINKS` resolves (HTTP 200/301). All four are public, so plain `curl -L` is sufficient — no authenticated checks needed (§5.1).
 - Confirm no console errors on any route.
 - Copy review against PRD §30 and §36: no SaaS language, no exaggerated claims, no manufactured scale/community/products.
@@ -658,35 +658,20 @@ Reinforcing PRD §31: no accounts, auth, CMS, blog engine, comments, newsletter,
 | :--- | :--- | :--- |
 | 1 | **External URLs** for the GitHub org, this repo, OpenEdu repo, and OpenEdu site | Verified against the live org. `github.com/KnowledgeAssembly`; this repo at `KnowledgeAssembly/knowledgeassemble.org`; OpenEdu at `KnowledgeAssembly/open-edu` with its Pages site at `knowledgeassembly.github.io/open-edu/`. The invented `openedu.org` domain was removed — it does not resolve. Recorded in §5.1. |
 | 2 | **License choice** | **MIT**, `LICENSE` committed at repo root (2026-10-05), copyright holder `KnowledgeAssembly`. Must be mirrored in `package.json` (`"license": "MIT"`) and named in the site footer (Phase 1, Phase 4). | Resolved |
+| 3 | **Domain registration + deployed origin** for `siteUrl` | Registered and live at the apex **`https://knowledgeassemble.org`** on Vercel (2026-10-05). `www` does not resolve. `siteUrl` is set, so canonical and `og:url` are absolute on every route. |
+| 4 | **Deploy target** | **Vercel.** `vercel.json` carries the SPA rewrite; verified in production — `https://knowledgeassemble.org/principles` returns 200. |
+| 5 | **Is CSR acceptable** given PRD §22? | **Yes, accepted and documented** in `README.md`; §4.2 mitigates with landmarks inside `<noscript>`. Tracked for a V2 prerender. |
 | 6 | **Website repo visibility** | **Public.** Confirms PRD §10 "open source, by default" and §16. The footer's GitHub CTA can point at `LINKS.githubRepo`. | Resolved |
 
-### 10.2 Still Open — Must Resolve Before Phase 1 or 7
+### 10.2 Still Open
 
 | # | Question | Blocks | Default if unanswered |
 | :--- | :--- | :--- | :--- |
-| 3 | **Domain registration + deployed origin** for `siteUrl`. Confirmed 2026-10-05: `knowledgeassemble.org` is **not registered** — `whois` returns "Domain not found" and there are no A/NS/SOA records. Registering it is an organizational purchase decision, not a build step. | Phase 7 — canonical URLs, `og:url` | Blocked — canonical cannot be absolute without it |
-| 5 | **Is CSR acceptable** given PRD §22 "do not make accessibility dependent on JavaScript"? (§4.2) | Phase 2 — whether V1 adds prerendering | Accept CSR + document; add `vite-plugin-ssg` if rejected |
 | 7 | Contact link in footer — include only if a real destination exists (PRD §11; do not invent an email) | Phase 4 — footer contents | Omit |
 
-**Note on Q4 — resolved 2026-10-05: deploy target is Vercel.** `vercel.json` is
-committed in Phase 2. §4.4's other options (`public/_redirects` for Netlify /
-Cloudflare Pages, `public/404.html` for GitHub Pages) are no longer needed. If the
-host changes, the rewrite rule must be migrated — a `vercel.json` left in place on a
-Netlify deploy silently deep-links to a 404. Vercel verified in Phase 11.
+**Q3 resolved 2026-10-05.** `knowledgeassemble.org` is registered and live at the apex on Vercel; `https://knowledgeassemble.org/principles` returns 200, confirming the SPA rewrite works in production. `www` does not resolve; if it is ever added it must 301 to the apex rather than be treated as a second canonical host. `siteUrl` in `src/config/site.ts` is set, turning on absolute canonical and `og:url` for every route.
 
-**Note on Q3 — the domain does not exist yet.** Verified 2026-10-05: `whois knowledgeassemble.org` returns "Domain not found", and `knowledgeassemble.org`, `www.knowledgeassemble.org`, and `knowledgeassembly.org` all have zero DNS records. The repo is named for a domain the organization does not yet control.
-
-This does not block Phases 1–6. It becomes blocking at Phase 7, and it is not a code task — registering the domain is a purchase and ownership decision. Consequences to plan around:
-
-- **Phases 1–6 proceed normally.** Set `siteUrl` to a temporary placeholder (e.g. `https://knowledgeassembly.github.io/knowledgeassemble.org/`) if an absolute URL is needed for early testing, and never ship canonical tags pointing at an unregistered host.
-- **Two hosting paths, different costs:**
-  - **GitHub Pages** — free, but the site lives at `knowledgeassembly.github.io/knowledgeassemble.org/` and `knowledgeassemble.org` must be added later as a custom domain.
-  - **Vercel** — free tier, and can attach a custom domain immediately once registered. **Chosen** (§10 Q4); `vercel.json` already carries the SPA rewrite.
-- **Sequencing matters.** Register the domain and attach it to Vercel, since some hosts make custom-domain setup much easier on first connect. The host is already chosen (§10 Q4); only the domain is outstanding.
-- **Decide apex vs `www`** before Phase 7 and apply it consistently in `siteUrl`, canonical tags, `og:url`, and the sitemap. Set the other as a 301 redirect, never both as canonical.
-- **HTTPS is handled by the host** via automatic certificates; there is no certificate work to do in this repo.
-
-The repo name may keep `knowledgeassemble.org` regardless — it expresses intent and GitHub redirects if renamed later.
+**Q4 resolved 2026-10-05.** Deploy target is Vercel; `vercel.json` carries the rewrite. A host change requires migrating that rule — a `vercel.json` left in place on a Netlify or GitHub Pages deploy silently deep-links to a 404.
 
 ---
 
