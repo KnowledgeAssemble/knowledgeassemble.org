@@ -59,10 +59,9 @@ test.describe('SEO and performance pass (implementation plan §10)', () => {
     expect(seconds).toBeLessThan(0.01);
   });
 
-  // The rewrite makes every path a 200, so the sitemap is the only thing that
-  // tells a crawler the real inventory. It must be served, parse, and resolve.
-  // The URLs inside are absolute against the live origin, not baseURL, because
-  // that is what a crawler resolves.
+  // The sitemap is the canonical inventory crawlers read; it must be served,
+  // parse, and resolve. The URLs inside are absolute against the live origin,
+  // not baseURL, because that is what a crawler resolves.
   test('serves a sitemap covering every canonical route', async ({ request }) => {
     const response = await request.get('/sitemap.xml');
     expect(response.status()).toBe(200);

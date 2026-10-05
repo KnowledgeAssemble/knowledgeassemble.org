@@ -22,16 +22,21 @@ like errors otherwise.
 
 ## Current state
 
-Phases 1–11 are implemented. `src/App.tsx` routes the five pages plus a
-not-found route through a `RootLayout` that renders `SkipLink`, `SiteHeader`,
-`<main>`, and `SiteFooter`. Pages are built on the design tokens in
-`src/styles/index.css` (imported from `src/main.tsx`); content lives in
-`src/content/`, external URLs in `src/config/links.ts`, and site metadata in
-`src/config/site.ts`. Each page module exports `meta` and calls
-`useDocumentMeta`, which sets title, description, OpenGraph/Twitter tags, and
-absolute canonical/`og:url`. `public/sitemap.xml` lists the five canonical
-routes and `public/robots.txt` points at it, because the `200`-for-everything
-rewrite leaves the URL space otherwise unbounded.
+The five canonical routes are **prerendered to static HTML at build time**
+(gap closure §4, §36). `src/routes.tsx` is the shared source of truth for the
+route table and the `prerenderEntries` list; `scripts/prerender.tsx` renders
+each entry with `react-router-dom`'s static handler and writes
+`dist/{route}/index.html`. `src/App.tsx` consumes the same `routes` for the
+client router, so JavaScript only enhances the already-present document.
+`index.html` is a minimal Vite template with an empty `#root`; route content
+and metadata live in the generated HTML.
+
+Pages are built on the design tokens in `src/styles/index.css` (imported from
+`src/main.tsx`); content lives in `src/content/`, external URLs in
+`src/config/links.ts`, and site metadata in `src/config/site.ts`. Each page
+module exports `meta`; the prerender reads it for the initial HTML and
+`useDocumentMeta` keeps using it for SPA navigation. `public/sitemap.xml`
+lists the five canonical routes and `public/robots.txt` points at it.
 
 `siteUrl` in `src/config/site.ts` is the live apex
 `https://knowledgeassemble.org` (§10 Q3 resolved), so canonical and `og:url`
@@ -40,8 +45,8 @@ must 301 to the apex. Brand assets (`public/favicon.svg`,
 `public/og-image.png`, `public/robots.txt`) are in place.
 
 Automated verification lives in `docs/TESTING_PLAN.md`: Vitest unit, component,
-and guard tests; Playwright route, axe, responsive, and SEO specs; and CI,
-which runs on every PR.
+and guard tests; Playwright route, axe, responsive, SEO, prerender, and no-JS
+specs; and CI, which runs on every PR.
 
 Stack is pinned in plan §4.1: **React 19 + Vite 7 + TypeScript strict +
 Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.ts`, no PostCSS) +
@@ -51,6 +56,10 @@ Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.ts`, no PostCSS) +
 
 Violating any of these fails the phase.
 
+- **Web document first.** All five canonical routes (`/`, `/projects`,
+  `/principles`, `/community`, `/about`) must produce meaningful HTML at build
+  time. Client-side JavaScript may enhance navigation and interaction but must
+  not be the sole source of route content.
 - **All color tokens live in one place:** the `@theme` block in
   `src/styles/index.css`. No hex literals or arbitrary color values
   (`bg-[#…]`, `ring-[#…]`) anywhere else. Reference tokens by name.
@@ -68,12 +77,12 @@ Violating any of these fails the phase.
   Never inline one anywhere else. Never invent a domain: OpenEdu is
   `github.com/KnowledgeAssembly/open-edu`; `openedu.org` is wrong and does not
   resolve.
-- **Canonical and `og:url` are per-route and runtime-injected.** `siteUrl` in
-  `src/config/site.ts` is the live apex `https://knowledgeassemble.org`. Do not
-  put a static `<link rel="canonical">` in `index.html`: `vercel.json` rewrites
-  every path to `index.html` with a `200`, so a static tag would claim the
-  homepage on every deep link. `www` does not resolve; if it is ever added it
-  must 301 to the apex.
+- **Canonical and `og:url` are per-route and generated at build time.** `siteUrl`
+  in `src/config/site.ts` is the live apex `https://knowledgeassemble.org`; the
+  prerender writes them into each route's HTML, and `useDocumentMeta` updates
+  them for SPA navigation. Do not put a static `<link rel="canonical">` in
+  `index.html` — it is route-independent and would claim the homepage on every
+  deep link. `www` does not resolve; if it is ever added it must 301 to the apex.
 - **Principle numbers render as `01`–`07`.** The `13.x` values are PRD section
   references and never reach the UI.
 - **Accessibility is a requirement, not a pass at the end.** Skip link, one
@@ -119,11 +128,11 @@ None blocking. Resolved decisions:
 
 - Domain `knowledgeassemble.org` is **registered and live** at the apex on Vercel
   (§10 Q3); `siteUrl` is set, so canonical and `og:url` are absolute.
-- **Deploy target is Vercel** (§10 Q4), so `vercel.json` is the SPA rewrite. If
-  the host ever changes, that rule must be migrated — a stale `vercel.json` on
-  another host means deep links silently 404.
-- **CSR is accepted** (§10 Q5) with the `<noscript>` shell mitigation, documented
-  in `README.md` (§4.2).
+- **Deploy target is Vercel** (§10 Q4). `vercel.json` uses `cleanUrls`; the five
+  routes are prerendered static files and `public/404.html` is the static 404.
+  If the host changes, that static-hosting behavior must be reproduced.
+- **Prerendering replaced the CSR exception** (gap closure §22). `index.html` no
+  longer ships a `<noscript>` shell; the generated HTML is the document.
 
 The **Contact link** stays omitted until a real destination exists (PRD §11). Do
 not invent an email.

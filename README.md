@@ -28,31 +28,30 @@ Requires Node `>=22.12` and npm.
 ```sh
 npm install
 npm run dev        # Vite dev server
-npm run build      # tsc -b, then vite build into dist/
-npm run preview    # serve the production build
+npm run build      # tsc -b, vite build, then prerender dist/*/index.html
+npm run prerender  # (re)render the five routes from an existing dist/
+npm run preview    # serve the production build (clean URLs + static 404)
 npm run typecheck  # tsc --noEmit plus the e2e tsconfig
 npm run test       # Vitest unit, component, and guard tests
-npm run test:e2e   # Playwright route, axe, responsive, and SEO specs
+npm run test:e2e   # Playwright route, axe, responsive, SEO, prerender, no-JS
 npm run verify     # typecheck + test + build + e2e (what CI runs)
 ```
 
-Status: Phases 1–11 implemented. Pages are built on the design tokens in `src/styles/index.css`; content lives in `src/content/`, external URLs in `src/config/links.ts`, and site metadata in `src/config/site.ts`. Canonical and `og:url` are absolute because `siteUrl` is set. With JavaScript disabled, the static shell in `index.html` is what renders.
+Status: V1 complete. The five canonical routes are prerendered to static HTML at build time; JavaScript enhances navigation. Pages are built on the design tokens in `src/styles/index.css`; content lives in `src/content/`, external URLs in `src/config/links.ts`, and site metadata in `src/config/site.ts`. Canonical and `og:url` are absolute because `siteUrl` is set.
 
 ## Deploy target: Vercel
 
-Vercel is the chosen host (plan §10 Q4). The SPA rewrite that keeps deep links such as `/principles` from 404ing on a hard refresh lives in [`vercel.json`](vercel.json) — all paths rewrite to `/index.html` with a `200` (plan §4.4).
+Vercel is the chosen host (plan §10 Q4). The build prerenders each canonical route to `dist/{route}/index.html`; [`vercel.json`](vercel.json) sets `cleanUrls` and `trailingSlash: false` so `/principles` serves the prerendered file, and [`public/404.html`](public/404.html) is the static, `noindex` 404 for anything else. There is no SPA rewrite.
 
 `siteUrl` is set to the live apex `https://knowledgeassemble.org` (plan §10 Q3 resolved), so canonical and `og:url` are absolute. `www` does not resolve; if it is ever added it must 301 to the apex.
 
-## Known limitation: V1 is client-side rendered
+## Delivery: prerendered, then enhanced
 
-PRD §22 states: *"Do not make accessibility dependent on JavaScript."* A React SPA with client-side routing cannot satisfy that — without JavaScript, route content is unavailable.
+The site is a web document first and a React application second (gap closure §36). `src/routes.tsx` declares the routes and their metadata once; `scripts/prerender.tsx` renders each of the five canonical routes to static HTML at build time, so every route has real content, its own `<title>`, canonical, and OpenGraph/Twitter metadata without JavaScript — for search engines, social crawlers, and no-JS browsers.
 
-**V1 accepts client-side rendering as a documented deviation** (plan §4.2, §10 Q5). It mitigates rather than solves the problem: `index.html` ships a real semantic shell — `<header>`, `<nav>`, `<main id="main-content">`, `<footer>` — inside a `<noscript>` block, alongside a short explanation of the requirement and a link to the [GitHub organization](https://github.com/KnowledgeAssembly), so the document has valid landmarks and a route out. Route content is deliberately not duplicated into `index.html`, which would create a second source of truth that drifts.
+Client-side rendering is retained as the enhancement layer: `src/main.tsx` still calls `createRoot(...).render(<App/>)`, which re-renders the same markup and attaches navigation and interactivity. The prerender uses `renderToStaticMarkup` (markers-free), so `createRoot` — not `hydrateRoot` — is the correct pairing. `index.html` is a minimal Vite template with an empty `#root`; there is no `<noscript>` shell, because the generated HTML is already the full document.
 
-The shell lives inside `<noscript>` rather than in the `<body>`, which is what makes it work for both audiences. A visitor with JavaScript never renders it: the shell has no layout rules of its own — the real header and footer get theirs from Tailwind utilities on the React components — so rendering it in the body paints bare markup in the top-left corner until hydration completes. A visitor without JavaScript renders nothing else, so for them the shell is the whole document. `#root` ships empty and React fills it.
-
-If full no-JavaScript parity is required for V1, the remedy is to add `vite-plugin-ssg` and prerender all five routes. That also resolves plan §4.3 and is the recommended path if the deviation is rejected.
+`vite preview` is configured (a preview-only plugin in `vite.config.ts`) to serve clean URLs and the static 404 the way Vercel does, so `npm run verify` exercises the deployed behavior.
 
 ## License
 

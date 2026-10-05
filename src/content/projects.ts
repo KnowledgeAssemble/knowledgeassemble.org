@@ -25,7 +25,7 @@ export const projects: ProjectItem[] = [
     description:
       'Tools and infrastructure for making knowledge structured, portable, and interactive.',
     status: 'Exploring',
-    categories: ['Formats', 'Graph', 'AST'],
+    categories: ['Structured Knowledge', 'Portable Formats', 'Interactive Systems'],
   },
   {
     id: 'experiments',

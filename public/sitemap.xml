@@ -2,11 +2,9 @@
 <!--
   Lists the five canonical routes.
 
-  `vercel.json` rewrites every path to `index.html` with a 200, so the URL space
-  is otherwise unbounded: `/anything` is a crawlable, indexable-status page.
-  This file is how a crawler learns the real inventory, and `robots.txt` points
-  at it. Not-found routes are deliberately absent — they emit `noindex` and
-  claim no canonical.
+  Each route is prerendered to static HTML at build time. This file is the
+  canonical inventory, and `robots.txt` points at it. Not-found routes are
+  deliberately absent — the static 404 emits `noindex` and claims no canonical.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>

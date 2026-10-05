@@ -213,24 +213,26 @@ describe('reduced motion (implementation plan §6.1)', () => {
   });
 });
 
-describe('static metadata fallbacks (implementation plan §4.3)', () => {
+describe('static metadata template (gap closure)', () => {
   const html = () => read(join(process.cwd(), 'index.html'));
 
-  it('declares favicon, theme-color, and an absolute og:image', () => {
+  it('declares only the route-independent head in the Vite template', () => {
     const contents = html();
     expect(contents).toContain('rel="icon"');
     expect(contents).toContain('name="theme-color"');
-    expect(contents).toMatch(
-      /property="og:image" content="https:\/\/knowledgeassemble\.org\/og-image\.png"/,
-    );
+    // Route-specific tags live in the prerender, not the template.
+    expect(contents).not.toContain('property="og:title"');
+    expect(contents).not.toContain('rel="canonical"');
   });
 
-  it('emits no static canonical, since Vercel serves index.html for every route', () => {
-    expect(html()).not.toContain('rel="canonical"');
+  it('ships an empty #root and no <noscript> shell', () => {
+    const contents = html();
+    expect(contents).toContain('<div id="root"></div>');
+    expect(contents).not.toContain('<noscript>');
   });
 });
 
-describe('crawlable surface (AGENTS.md, Vercel rewrite)', () => {
+describe('crawlable surface (AGENTS.md, static hosting)', () => {
   const ROUTES = ['/', '/projects', '/principles', '/community', '/about'];
 
   it('lists exactly the canonical routes in sitemap.xml, on the live origin', () => {
@@ -246,7 +248,8 @@ describe('crawlable surface (AGENTS.md, Vercel rewrite)', () => {
 
   it('excludes the not-found route, which is noindex', () => {
     const sitemap = read(join(process.cwd(), 'public', 'sitemap.xml'));
-    expect(sitemap).not.toContain('404');
+    const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+    expect(locations.some((url) => url?.includes('404'))).toBe(false);
   });
 
   it('points robots.txt at the sitemap', () => {
