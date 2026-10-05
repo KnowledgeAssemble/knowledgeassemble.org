@@ -33,11 +33,11 @@ npm run preview    # serve the production build
 npm run typecheck  # tsc --noEmit
 ```
 
-Status: scaffolding only. `npm run preview` renders an empty `#root` until the router lands in Phase 2; with JavaScript disabled, the static shell in `index.html` is what renders.
+Status: routing shell only. The five routes (`/`, `/projects`, `/principles`, `/community`, `/about`) plus a not-found route render placeholder headings until the pages land in Phase 4. With JavaScript disabled, the static shell in `index.html` is what renders.
 
-## Deploy target: undecided
+## Deploy target: Vercel
 
-No host has been chosen (plan §10 Q4). This blocks the SPA rewrite config in plan §4.4 — `public/_redirects` for Netlify or Cloudflare Pages, `vercel.json` for Vercel, `public/404.html` for GitHub Pages. Until a host is picked, deep links such as `/principles` will 404 on a static host.
+Vercel is the chosen host (plan §10 Q4). The SPA rewrite that keeps deep links such as `/principles` from 404ing on a hard refresh lives in [`vercel.json`](vercel.json) — all paths rewrite to `/index.html` with a `200` (plan §4.4).
 
 Domain registration (plan §10 Q3) blocks canonical and `og:url` wiring in Phase 7. Never ship those tags pointing at the unregistered domain.
 
