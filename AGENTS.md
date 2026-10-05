@@ -21,7 +21,9 @@ like errors otherwise.
 
 ## Current state
 
-Planning only. No application code exists yet. Phases start at §7 Phase 1.
+Phase 1 is committed (`8ef49cb`): the workspace scaffold exists but there is no
+application code yet. `src/main.tsx` renders `null`, so the page is blank after
+mount. Phase 2 (routing shell) is next.
 
 Stack is pinned in plan §4.1: **React 19 + Vite 7 + TypeScript strict +
 Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.ts`, no PostCSS) +
@@ -29,7 +31,7 @@ Tailwind CSS v4** (CSS-first `@theme`, no `tailwind.config.ts`, no PostCSS) +
 
 ## Hard constraints
 
-Violating any of these fails the phase, and the auditor will catch it.
+Violating any of these fails the phase.
 
 - **All color tokens live in one place:** the `@theme` block in
   `src/styles/index.css`. No hex literals or arbitrary color values
@@ -77,21 +79,8 @@ Do not invent answers to these; they are organizational decisions (§10):
 - **CSR vs prerender** sign-off — affects Phase 2 (§4.2).
 - **Contact link** — include only if a real destination exists; do not invent an email.
 
-## Delegation
+## Screenshots
 
-Three subagents, all on `opencode-go/deepseek-v4-flash`:
-
-| Agent | Role |
-| :--- | :--- |
-| `phase-builder` | Implements one phase. Writes code. |
-| `phase-auditor` | Read-only audit of a phase against §8 DoD. |
-| `spec-researcher` | Read-only spec/design research. |
-
-Workflow: `phase-builder` implements a phase → `phase-auditor` verifies it →
-orchestrator commits and dispatches the next phase. Do not run two
-`phase-builder` agents concurrently; phases share `src/styles/index.css` and the
-routing shell, so parallel writes will conflict.
-
-**The subagents cannot read the `screen.png` prototypes** — the model has no
-image input. Build from `DESIGN.md` and `code.html`. If a design decision truly
-requires viewing a screenshot, say so rather than guessing.
+The `screen.png` prototypes need image input, which is not assumed. Build from
+`DESIGN.md` and `code.html`. If a design decision truly requires viewing a
+screenshot, say so rather than guessing.
