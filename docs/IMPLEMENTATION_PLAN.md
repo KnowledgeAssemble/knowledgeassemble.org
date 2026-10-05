@@ -219,7 +219,7 @@ PRD §22 states: *"Do not make accessibility dependent on JavaScript."* A React 
 
 **Decision: V1 accepts client-side rendering** and mitigates rather than solves:
 
-1. `index.html` contains real, semantic static shell markup (`<header>`, `<main>`, `<nav>`, `<footer>`) plus the brand and a `<noscript>` block explaining the site requires JavaScript and linking to the GitHub organization.
+1. `index.html` contains real, semantic static shell markup (`<header>`, `<main>`, `<nav>`, `<footer>`) plus the brand, inside a `<noscript>` block that also explains the site requires JavaScript and links to the GitHub organization. Scoping the shell to `<noscript>` is what keeps it from painting unstyled for visitors who do have JavaScript — see §6.2.
 2. Route content is not duplicated into `index.html` (avoiding a second source of truth that would drift).
 3. This limitation is recorded in the repo `README.md` and tracked for V2, where `react-router-dom`'s `StaticRouter` makes prerendering the 5 static routes straightforward.
 
@@ -443,7 +443,11 @@ Target: **WCAG 2.1 AA**, with the specific 2.2 additions noted. Every claim belo
 
 ### 6.2 Structural Markup Baseline
 
-`index.html` ships the site shell as real markup — header nav, `<main id="main-content">`, footer — so the document has valid landmarks before hydration. React replaces content inside `#root`. This is the §4.2 mitigation.
+`index.html` ships the site shell as real markup — header nav, `<main id="main-content">`, footer — inside a `<noscript>` block, so that visitors without JavaScript get valid landmarks and a route out. This is the §4.2 mitigation.
+
+The shell is scoped to `<noscript>` deliberately. It carries no layout rules of its own; the real header and footer get theirs from Tailwind utilities on the React components, which do not exist until hydration. Rendering it in the `<body>` therefore paints unstyled block markup in the top-left corner for the tens of milliseconds before React mounts, in production as well as dev. Keeping it in `<noscript>` gives each audience what it needs and costs neither a flash nor a duplicated stylesheet.
+
+`#root` ships empty; React fills it. Asserted by `src/test/staticShell.test.ts` and the two `static shell` specs in `tests/e2e/routes.spec.ts`.
 
 ### 6.3 Touch Targets
 

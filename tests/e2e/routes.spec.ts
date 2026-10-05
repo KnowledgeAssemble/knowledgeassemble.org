@@ -31,6 +31,43 @@ test.describe('route smoke and structural constraints', () => {
     });
   }
 
+  // The static shell is the §4.2 no-JS mitigation, and it is scoped to <noscript>
+  // precisely so that a JavaScript visitor never renders it before hydration.
+  // These two tests are the browser-side half of that contract; src/test/
+  // staticShell.test.ts asserts the same thing statically.
+  test.describe('static shell', () => {
+    test('paints nothing before hydration when JavaScript is enabled', async ({ page }) => {
+      // Block the bundle so the pre-hydration state is observable instead of
+      // being replaced a few tens of milliseconds after load.
+      await page.route('**/*.js', (route) => route.abort());
+      await page.route('**/*.css', (route) => route.abort());
+      await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+      const painted = await page.evaluate(() => ({
+        children: document.getElementById('root')?.children.length ?? -1,
+        text: document.body.innerText.trim(),
+      }));
+
+      expect(painted.children).toBe(0);
+      expect(painted.text).toBe('');
+    });
+
+    test('gives no-JS visitors real landmarks and a GitHub route out', async ({ browser }) => {
+      const context = await browser.newContext({ javaScriptEnabled: false });
+      const page = await context.newPage();
+      await page.goto('/', { waitUntil: 'load' });
+
+      await expect(page.locator('header')).toHaveCount(1);
+      await expect(page.locator('main#main-content')).toHaveCount(1);
+      await expect(page.locator('nav[aria-label="Primary"]')).toHaveCount(1);
+      await expect(page.locator('footer')).toHaveCount(1);
+      await expect(page.locator('h1')).toHaveCount(1);
+      await expect(page.locator('a[href*="github.com/KnowledgeAssembly"]')).toHaveCount(1);
+
+      await context.close();
+    });
+  });
+
   test('titles and descriptions are distinct per route', async ({ page }) => {
     const titles = new Set<string>();
     const descriptions = new Set<string>();

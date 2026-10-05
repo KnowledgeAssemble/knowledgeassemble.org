@@ -30,7 +30,29 @@
     <meta name="twitter:image" content="/og-image.png" />
   </head>
   <body>
-    <div id="root">
+    <!--
+      Empty on purpose. React mounts into #root; anything visible here paints
+      unstyled first, because the shell below has no layout rules of its own and
+      the real header/footer get theirs from Tailwind utilities on the React
+      components. A bare <header><h1> stacking in the top-left corner for the
+      ~70ms before hydration is the flash; this div is what prevents it.
+
+      With JavaScript enabled, <noscript> below is not rendered at all.
+    -->
+    <div id="root"></div>
+
+    <!--
+      The §4.2 no-JS mitigation (PRD §22: do not make accessibility dependent on
+      JavaScript). Without JS there is no app, so this is the whole document:
+      real landmarks, working navigation to the static routes, and a pointer to
+      GitHub for anything not reachable this way.
+
+      It lives inside <noscript> rather than in the body so that JS users never
+      see it. Those users get the shell's content from React a few tens of
+      milliseconds later, correctly styled; no-JS users get exactly the same
+      markup, permanently.
+    -->
+    <noscript>
       <header>
         <a href="/">KnowledgeAssemble</a>
         <nav aria-label="Primary">
@@ -45,15 +67,14 @@
       </header>
       <main id="main-content">
         <h1>KnowledgeAssemble</h1>
+        <p>This site is a JavaScript application, so its pages need JavaScript enabled.</p>
+        <p>You can browse our work on <a href="https://github.com/KnowledgeAssembly">GitHub</a> instead.</p>
       </main>
       <footer>
         <p>KnowledgeAssemble</p>
       </footer>
-    </div>
-    <noscript>
-      <p>This site is a JavaScript application, so its pages need JavaScript enabled.</p>
-      <p>You can browse our work on <a href="https://github.com/KnowledgeAssembly">GitHub</a> instead.</p>
     </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
