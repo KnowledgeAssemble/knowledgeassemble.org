@@ -10,6 +10,10 @@
 
 ## 1. Current State
 
+> Historical. This section records the state *before* the test framework in §4–§8
+> was built, and is kept as the baseline that justified it. For what the suite
+> contains today, see §4.5, §7.1, and the `scripts` block in `package.json`.
+
 The `scripts` block in `package.json` is the whole verification story:
 
 ```json
@@ -162,6 +166,8 @@ Playwright specs in `tests/e2e/` fall *outside* that include and so are not type
 - Add `tests/e2e` to a new `tsconfig.e2e.json` and a `typecheck:e2e` script (recommended — keeps e2e types honest).
 - Or add `tests` to the root `include`, accepting that `tsc -b` then typechecks Playwright specs with `types: ["vite/client"]` and no `@playwright/test` types.
 
+**Build scripts need their own project.** `scripts/prerender.tsx` writes every page's HTML, so a type error there is a wrong deploy rather than a red build — but `tsconfig.json` includes only `src` and `tsconfig.node.json` only `vite.config.ts`. `tsconfig.scripts.json` covers `scripts/` with `types: ["node"]` (it uses `node:fs`) and `jsx: "react-jsx"`. Its `lib` must include `DOM`, because it imports page components that reference `document`. It is checked by `npm run typecheck`, not by `tsc -b`, because it is a build tool rather than an app source.
+
 ## 5. Scripts to add
 
 ```json
@@ -169,7 +175,7 @@ Playwright specs in `tests/e2e/` fall *outside* that include and so are not type
 "test:watch": "vitest",
 "test:coverage": "vitest run --coverage",
 "test:e2e": "playwright test",
-"typecheck": "tsc --noEmit && tsc -p tsconfig.e2e.json --noEmit",
+"typecheck": "tsc --noEmit && tsc -p tsconfig.e2e.json --noEmit && tsc -p tsconfig.scripts.json --noEmit",
 "verify": "npm run typecheck && npm run test && npm run build && npm run test:e2e"
 ```
 
@@ -249,6 +255,21 @@ Two details worth calling out:
 **Source-scanning tests belong in Vitest, not Playwright.** They read files from disk and need no browser, so they belong in the unit suite. The overflow, `h1`, and axe checks need a rendered page and belong in Playwright.
 
 The axe check covers the *mechanical* part of Phase 8 only. It cannot judge whether focus rings are visible, whether headings are logically ordered for a screen reader, or whether contrast holds on a gradient — which is why the plan does not let passing tests retire the manual audit.
+
+### 7.1 Prerender and no-JS specs (gap closure)
+
+Added with the prerender pass, because a build-time HTML claim that nothing asserts will rot the first time someone edits a page.
+
+| Test | Asserts | Why it exists |
+| :--- | :--- | :--- |
+| `src/test/routes.test.ts` | `prerenderEntries` matches the five canonical routes *and* the leaf paths of the route table; each entry's `canonicalPath` equals its route; the 404 entry writes `404.html`, is `noIndex` with no canonical, and is not in the canonical set | Guards against the two lists drifting. Nothing else fails loudly when a page is added to one and not the other — the build still succeeds, that route just silently stops being prerendered. |
+| `tests/e2e/prerender.spec.ts` | The **served HTML** carries per-route title, description, canonical, `og:url`, `og:image`; no `JavaScript application` text; `/` is not an empty `#root`; the 404 is a real document, is styled (not a browser-default serif), exposes the primary nav and footer, and is `noindex` with no canonical | Asserts the served bytes, not the hydrated DOM. A Playwright `page.goto` sees whatever React produced; only `request.get` sees what a crawler sees. |
+| `tests/e2e/nojs.spec.ts` | Each route's `h1` text and count with `javaScriptEnabled: false`, plus link navigation between routes | The prerender exists for no-JS visitors, so this is the acceptance test for the whole change. |
+| `routes.spec.ts` → `not-found route` | Both a hard request *and* a client-side navigation to an unknown path render the not-found experience; the latter claims no canonical | A hard request never reaches `NotFoundPage` — the host answers with `dist/404.html` first. Without the SPA-navigation case, `NotFoundPage` and its `noIndex` branch have no coverage at all. |
+
+`vite preview` runs a preview-only plugin (`vite.config.ts`) that resolves clean URLs to their directory index and serves `dist/404.html` for unknown paths, mirroring `cleanUrls` on Vercel. Without it, `vite preview`'s SPA fallback serves the homepage for `/projects` and the specs above would pass against the wrong document.
+
+The 404 spec asserts a computed `font-family` is not the browser default. That is the regression test for the one bug this pass introduced: a hand-written `public/404.html` shipped with no stylesheet link, so every mistyped URL rendered as Times New Roman with no site chrome. The 404 is now prerendered from `NotFoundPage` into `dist/404.html`, which keeps one copy of the copy and inherits the real stylesheet.
 
 ## 8. Phase C — CI
 

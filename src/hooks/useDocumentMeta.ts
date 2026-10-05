@@ -41,8 +41,9 @@ export function useDocumentMeta(meta: PageMeta): void {
     setMetaTag('name', 'twitter:description', meta.description, created);
     setMetaTag('name', 'twitter:card', 'summary_large_image', created);
 
-    // The SPA rewrite serves the not-found route as HTTP 200, so `noindex` is the
-    // only signal that tells crawlers the URL has no content of its own.
+    // Unknown URLs get the static 404, which is noindex, but an in-app
+    // navigation onto the catch-all route does not reload the document — so the
+    // tag has to be managed here too.
     const robots = document.head.querySelector<HTMLMetaElement>('meta[name="robots"]');
     if (meta.noIndex) {
       setMetaTag('name', 'robots', 'noindex', created);
@@ -61,6 +62,14 @@ export function useDocumentMeta(meta: PageMeta): void {
       }
       canonical.setAttribute('href', url);
       setMetaTag('property', 'og:url', url, created);
+    } else {
+      // A route with no canonical must not inherit one. The prerender writes
+      // canonical/og:url into the document, so on a route that claims neither
+      // they are already in the head and absent from `created` — leaving them
+      // would make SPA navigation onto this route advertise the previous
+      // route's URL as canonical for the rest of the session.
+      document.head.querySelector('link[rel="canonical"]')?.remove();
+      document.head.querySelector('meta[property="og:url"]')?.remove();
     }
 
     return () => {

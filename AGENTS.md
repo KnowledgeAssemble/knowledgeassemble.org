@@ -129,7 +129,7 @@ None blocking. Resolved decisions:
 - Domain `knowledgeassemble.org` is **registered and live** at the apex on Vercel
   (§10 Q3); `siteUrl` is set, so canonical and `og:url` are absolute.
 - **Deploy target is Vercel** (§10 Q4). `vercel.json` uses `cleanUrls`; the five
-  routes are prerendered static files and `public/404.html` is the static 404.
+  routes are prerendered static files and `dist/404.html` is the static 404.
   If the host changes, that static-hosting behavior must be reproduced.
 - **Prerendering replaced the CSR exception** (gap closure §22). `index.html` no
   longer ships a `<noscript>` shell; the generated HTML is the document.

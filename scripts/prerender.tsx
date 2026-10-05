@@ -6,7 +6,7 @@ import {
   createStaticRouter,
   StaticRouterProvider,
 } from 'react-router-dom';
-import { prerenderEntries, routes } from '../src/routes';
+import { allPrerenderEntries, routes } from '../src/routes';
 import { siteName, siteUrl } from '../src/config/site';
 import type { PageMeta } from '../src/types';
 
@@ -85,9 +85,9 @@ function documentFor(routeHtml: string, head: string): string {
 }
 
 async function main(): Promise<void> {
-  for (const entry of prerenderEntries) {
+  for (const entry of allPrerenderEntries) {
     const html = await renderRoute(entry.path);
-    const file = join(dist, entry.path, 'index.html');
+    const file = join(dist, entry.outFile);
     mkdirSync(dirname(file), { recursive: true });
     writeFileSync(file, documentFor(html, headFor(entry.meta)));
     console.log(`prerendered ${entry.path} -> ${file}`);

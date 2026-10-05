@@ -54,6 +54,25 @@ test.describe('route smoke and structural constraints', () => {
       await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
       await expect(page.locator('meta[property="og:url"]')).toHaveCount(0);
     });
+
+    // A hard request never reaches this component — the host answers with the
+    // prerendered dist/404.html before any JavaScript runs. Only in-app
+    // navigation reaches NotFoundPage, so that is what needs covering.
+    test('renders NotFoundPage on client-side navigation to an unknown path', async ({ page }) => {
+      await page.goto('/');
+      await page.evaluate(() => {
+        window.history.pushState({}, '', '/no-such-page');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      });
+
+      await expect(page.locator('h1')).toHaveText('Page not found');
+      await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+      await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+
+      // It must still offer a way out.
+      await page.getByRole('link', { name: /return home/i }).click();
+      await expect(page.locator('h1')).toHaveText('Building open systems for assembling knowledge.');
+    });
   });
 
   test('titles and descriptions are distinct per route', async ({ page }) => {

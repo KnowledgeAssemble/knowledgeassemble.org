@@ -41,7 +41,7 @@ Status: V1 complete. The five canonical routes are prerendered to static HTML at
 
 ## Deploy target: Vercel
 
-Vercel is the chosen host (plan §10 Q4). The build prerenders each canonical route to `dist/{route}/index.html`; [`vercel.json`](vercel.json) sets `cleanUrls` and `trailingSlash: false` so `/principles` serves the prerendered file, and [`public/404.html`](public/404.html) is the static, `noindex` 404 for anything else. There is no SPA rewrite.
+Vercel is the chosen host (plan §10 Q4). The build prerenders each canonical route to `dist/{route}/index.html`; [`vercel.json`](vercel.json) sets `cleanUrls` and `trailingSlash: false` so `/principles` serves the prerendered file, and `dist/404.html` is the static, `noindex` 404 for anything else. There is no SPA rewrite.
 
 `siteUrl` is set to the live apex `https://knowledgeassemble.org` (plan §10 Q3 resolved), so canonical and `og:url` are absolute. `www` does not resolve; if it is ever added it must 301 to the apex.
 

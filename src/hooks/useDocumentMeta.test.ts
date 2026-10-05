@@ -84,4 +84,36 @@ describe('useDocumentMeta', () => {
     rerender({ meta: baseMeta });
     expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
   });
+
+  // The prerender writes canonical/og:url into the document, so those tags
+  // already exist before the hook runs and are not in `created`. A route that
+  // claims no canonical must therefore remove them outright, or SPA navigation
+  // onto it would leave the previous route's canonical pointing at the wrong URL.
+  it('removes a prerendered canonical when the route claims none', () => {
+    const canonical = document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    canonical.setAttribute('href', 'https://knowledgeassemble.org/projects');
+    document.head.appendChild(canonical);
+
+    const ogUrl = document.createElement('meta');
+    ogUrl.setAttribute('property', 'og:url');
+    ogUrl.setAttribute('content', 'https://knowledgeassemble.org/projects');
+    document.head.appendChild(ogUrl);
+
+    renderHook(() => useDocumentMeta({ ...baseMeta, canonicalPath: '', noIndex: true }));
+
+    expect(document.head.querySelector('link[rel="canonical"]')).toBeNull();
+    expect(document.head.querySelector('meta[property="og:url"]')).toBeNull();
+  });
+
+  it('re-points a prerendered canonical on SPA navigation to another route', () => {
+    const canonical = document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    canonical.setAttribute('href', 'https://knowledgeassemble.org/projects');
+    document.head.appendChild(canonical);
+
+    renderHook(() => useDocumentMeta({ ...baseMeta, canonicalPath: '/about' }));
+
+    expect(canonical.getAttribute('href')).toBe('https://knowledgeassemble.org/about');
+  });
 });

@@ -20,19 +20,27 @@ function previewCleanUrls(): Plugin {
     configurePreviewServer(server) {
       server.middlewares.use((req, res, next) => {
         const path = (req.url ?? '/').split('?')[0] ?? '/'
-        if (path === '/' || path.includes('.')) return next()
+        if (path === '/') return next()
 
         const dist = join(server.config.root, server.config.build.outDir)
-        const normalized = path.replace(/\/$/, '')
 
-        if (existsSync(join(dist, normalized, 'index.html'))) {
-          req.url = `${normalized}/index.html`
+        // Only the last segment decides whether this is an asset request. A
+        // dotted directory such as `/v1.0/notes` is a route, not a file, and
+        // must 404 rather than fall through to the SPA shell.
+        const lastSegment = path.slice(path.lastIndexOf('/') + 1)
+        if (lastSegment.includes('.')) return next()
+
+        if (existsSync(join(dist, path.replace(/\/$/, ''), 'index.html'))) {
+          req.url = `${path.replace(/\/$/, '')}/index.html`
           return next()
         }
 
+        const notFound = join(dist, '404.html')
+        if (!existsSync(notFound)) return next()
+
         res.statusCode = 404
         res.setHeader('Content-Type', 'text/html; charset=utf-8')
-        res.end(readFileSync(join(dist, '404.html'), 'utf8'))
+        res.end(readFileSync(notFound, 'utf8'))
       })
     },
   }
