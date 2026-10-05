@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+/*
+ * KnowledgeAssemble design tokens.
+ *
+ * This @theme block is the single source of truth for color, typography, and
+ * shape (plan §2.2, §2.3). No component file may contain a hex literal or an
+ * arbitrary color value; reference these tokens by name.
+ *
+ * Source-token mapping to docs/stitch_knowledgeassemble_website_v1/
+ * assembled_knowledge_framework/DESIGN.md is preserved in comments.
+ */
+@theme {
+  /* ── Canvas & Surfaces ─────────────────────────────────────────── */
+  /* DESIGN.md: canvas #FBFBF9 · surface #FFFFFF · subtle #F7F7F4 · muted #ECEEF3 */
+  --color-canvas: #fbfbf9; /* Warm off-white paper ground */
+  --color-surface: #ffffff; /* Elevated card & module surface */
+  --color-surface-subtle: #f7f7f4; /* Secondary tinted containers & code blocks */
+  --color-surface-muted: #eceef3; /* Deep subtle container tier */
+
+  /* ── Text & Foreground ─────────────────────────────────────────── */
+  /* DESIGN.md: primary #1C1F23 · secondary #545B64 · tertiary #737A84 */
+  --color-ink: #1c1f23; /* 15.96:1 on canvas — WCAG AAA */
+  --color-ink-secondary: #545b64; /*  6.63:1 on canvas — WCAG AA */
+  --color-ink-tertiary: #666d77; /*  5.04:1 on canvas — WCAG AA (overridden from #737A84) */
+
+  /* ── Accent Tones (Mineral & Archival) ─────────────────────────── */
+  /* DESIGN.md: primary #164E63 · hover #113B4B · secondary #2D5A46 · subtle #F2F7F4 */
+  --color-accent: #164e63; /*  8.80:1 on canvas; white text on it 9.11:1 */
+  --color-accent-hover: #113b4b; /* 11.99:1 with white text */
+  --color-verified: #2d5a46; /*  7.61:1 on canvas — status pills & verification */
+  --color-verified-subtle: #f2f7f4; /* Pill background for `verified` */
+
+  /* ── Borders & Hairlines ───────────────────────────────────────── */
+  /* DESIGN.md: hairline #E2E2DC · interactive perimeter #CECEC6 */
+  --color-rule: #e2e2dc; /* 1px structural hairline rules (decorative only) */
+  --color-rule-strong: #cecec6; /* Overlay/drawer perimeter (decorative only) */
+  --color-rule-interactive: #8c8c82; /* 3.28:1 — REQUIRED for interactive component
+                                        boundaries per WCAG 1.4.11. Never substitute
+                                        `rule-strong` here. */
+
+  /* ── Focus Indicator ───────────────────────────────────────────── */
+  --color-focus-ring: #164e63; /* 8.80:1 on canvas, 7.85:1 on muted */
+
+  /* ── Shape (DESIGN.md §Shapes: "machined, orderly, architectural") ── */
+  --radius-control: 0.25rem; /* 4px — buttons, badges, inputs, code */
+  --radius-panel: 0.5rem; /* 8px — cards, panels, dialogs */
+  /* Explicitly forbidden: pill/stadium radii and circular avatars. */
+
+  /* ── Fonts ─────────────────────────────────────────────────────── */
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* ── Typography Scale (DESIGN.md §typography) ──────────────────── */
+  --text-display-lg: 3rem; /* 48px */
+  --text-display-lg--line-height: 3.5rem; /* 56px */
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 600;
+
+  --text-display-lg-mobile: 2rem; /* 32px */
+  --text-display-lg-mobile--line-height: 2.5rem; /* 40px */
+  --text-display-lg-mobile--letter-spacing: -0.015em;
+  --text-display-lg-mobile--font-weight: 600;
+
+  --text-headline-lg: 2rem; /* 32px */
+  --text-headline-lg--line-height: 2.5rem; /* 40px */
+  --text-headline-lg--letter-spacing: -0.015em;
+  --text-headline-lg--font-weight: 600;
+
+  --text-headline-lg-mobile: 1.625rem; /* 26px */
+  --text-headline-lg-mobile--line-height: 2.125rem; /* 34px */
+  --text-headline-lg-mobile--letter-spacing: -0.01em;
+  --text-headline-lg-mobile--font-weight: 600;
+
+  --text-headline-md: 1.5rem; /* 24px */
+  --text-headline-md--line-height: 2rem; /* 32px */
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-md--font-weight: 600;
+
+  --text-headline-sm: 1.25rem; /* 20px */
+  --text-headline-sm--line-height: 1.75rem; /* 28px */
+  --text-headline-sm--letter-spacing: -0.005em;
+  --text-headline-sm--font-weight: 600;
+
+  --text-body-lg: 1.125rem; /* 18px */
+  --text-body-lg--line-height: 1.75rem; /* 28px */
+
+  --text-body-md: 0.9375rem; /* 15px */
+  --text-body-md--line-height: 1.5rem; /* 24px */
+
+  --text-body-sm: 0.8125rem; /* 13px */
+  --text-body-sm--line-height: 1.25rem; /* 20px */
+
+  --text-code-md: 0.8125rem; /* 13px */
+  --text-code-md--line-height: 1.25rem; /* 20px */
+
+  --text-label-md: 0.75rem; /* 12px */
+  --text-label-md--line-height: 1rem; /* 16px */
+  --text-label-md--letter-spacing: 0.02em;
+  --text-label-md--font-weight: 500;
+
+  --text-label-sm: 0.6875rem; /* 11px */
+  --text-label-sm--line-height: 0.875rem; /* 14px */
+  --text-label-sm--letter-spacing: 0.04em;
+  --text-label-sm--font-weight: 500;
+}
+
+@layer base {
+  /* Hairline rules are the default border colour, not currentColor. */
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-rule);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* One focus treatment for every interactive element (plan §6.1). */
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Global reduced-motion reset (plan §6.1). */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Shared focus-ring utility so components can opt in explicitly. */
+@utility focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
