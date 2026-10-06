@@ -35,6 +35,34 @@ test.describe('prerendered HTML (spec §5–§7)', () => {
   });
 });
 
+// Spec §40 / AGENTS.md "web document first": the reveal system hides content
+// only via `data-reveal`, which the hook applies in the browser before paint.
+// Effects never run during prerender, so that attribute must not exist in the
+// built HTML — that is what makes a no-JS reader, a crawler, and a failed
+// bundle see the finished content rather than a blank page. Enforced against
+// the served HTML, not the source, because the source is only a proxy.
+test.describe('prerendered HTML carries no hidden-by-default state', () => {
+  for (const route of ROUTES) {
+    test(`${route} contains no data-reveal attribute`, async ({ request }) => {
+      const url = route === '/' ? '/' : `${route}/`;
+      const html = await (await request.get(url)).text();
+
+      expect(html, `${route} shipped a hidden start state`).not.toContain('data-reveal');
+    });
+  }
+
+  test('the visual placeholders are present in the document, not added by JS', async ({
+    request,
+  }) => {
+    const html = await (await request.get('/')).text();
+
+    // The hero is pure CSS and must ship its markup; the flow diagram is
+    // decorative but still belongs to the document.
+    expect(html).toContain('data-hero-node');
+    expect(html).toContain('vis-draw');
+  });
+});
+
 // The host serves dist/404.html for any unknown URL. It is prerendered from
 // NotFoundPage, so it must carry the same document furniture as every other
 // route: real content, the built stylesheet, and noindex with no canonical.

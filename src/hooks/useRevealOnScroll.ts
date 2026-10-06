@@ -21,7 +21,7 @@ export function useRevealOnScroll<T extends HTMLElement>() {
     const node = ref.current;
     if (!node) return;
 
-    if (!('IntersectionObserver' in window)) {
+    if (typeof window.IntersectionObserver !== 'function') {
       node.dataset.reveal = 'visible'; // §40: no observer, no hiding
       return;
     }
@@ -35,7 +35,10 @@ export function useRevealOnScroll<T extends HTMLElement>() {
           observer.disconnect();
         }
       },
-      { threshold: 0.2 },
+      // Threshold 0, not a ratio: a section taller than about five viewports can
+      // never reach 0.2 of itself being visible, so a ratio threshold would
+      // leave it hidden forever with nothing to indicate why.
+      { threshold: 0 },
     );
     observer.observe(node);
     return () => observer.disconnect();

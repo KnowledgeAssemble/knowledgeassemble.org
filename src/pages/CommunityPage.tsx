@@ -51,7 +51,7 @@ export default function CommunityPage() {
         title="Five ways to contribute"
         contentClassName="mt-10"
       >
-        <CommunityAssembly className="mb-10" />
+        <CommunityAssembly className="mx-auto mb-10 w-full max-w-md" />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {communityTracks.map((track) => (
             <CommunityCard key={track.id} track={track} />

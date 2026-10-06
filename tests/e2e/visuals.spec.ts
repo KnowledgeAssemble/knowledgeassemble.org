@@ -5,7 +5,7 @@ const ROUTES = ['/', '/projects', '/principles', '/community', '/about'];
 test.describe('motion visuals (spec §10–§28)', () => {
   test('the hero visual renders on the homepage', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('[data-hero-seq]:visible').first()).toBeVisible();
+    await expect(page.locator('[data-hero-node]:visible').first()).toBeVisible();
   });
 
   test('reduced motion settles everything immediately and removes continuous motion', async ({
@@ -14,7 +14,7 @@ test.describe('motion visuals (spec §10–§28)', () => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
 
-    await expect(page.locator('[data-hero-seq]:visible').first()).toHaveCSS('opacity', '1');
+    await expect(page.locator('[data-hero-node]:visible').first()).toHaveCSS('opacity', '1');
     await expect(page.locator('.vis-draw').first()).toHaveCSS('stroke-dashoffset', '0px');
 
     const hasInfinite = await page.evaluate(() =>
@@ -23,15 +23,17 @@ test.describe('motion visuals (spec §10–§28)', () => {
       ),
     );
     expect(hasInfinite).toBe(false);
-
-    const particle = page.locator('.vis-particle');
-    if ((await particle.count()) > 0) {
-      await expect(particle.first()).toHaveCSS('display', 'none');
-    }
   });
 
-  test('the hero plays once per session and does not restart on SPA return', async ({ page }) => {
+  test('the hero plays on load, is suppressed on SPA return, and replays on hard reload', async ({
+    page,
+  }) => {
     await page.goto('/');
+
+    // A fresh document animates the hero.
+    await expect(page.locator('[data-hero-node]').first()).not.toHaveCSS('animation-name', 'none');
+
+    // After the sequence the document is marked, so an SPA return does not replay.
     await expect(page.locator('html')).toHaveClass(/hero-played/, { timeout: 5000 });
 
     await page.getByRole('link', { name: 'Projects' }).first().click();
@@ -39,8 +41,11 @@ test.describe('motion visuals (spec §10–§28)', () => {
 
     await page.locator('header').getByRole('link', { name: 'KnowledgeAssemble' }).click();
     await expect(page).toHaveURL(/\/$/);
+    await expect(page.locator('[data-hero-node]').first()).toHaveCSS('animation-name', 'none');
 
-    await expect(page.locator('[data-hero-seq]:visible').first()).toHaveCSS('animation-name', 'none');
+    // A hard reload is a fresh document — no session gate — so the hero plays again.
+    await page.reload();
+    await expect(page.locator('[data-hero-node]').first()).not.toHaveCSS('animation-name', 'none');
   });
 
   test('below-the-fold sections reveal when scrolled into view', async ({ page }) => {
@@ -86,21 +91,22 @@ test.describe('motion visuals (spec §10–§28)', () => {
     }
   });
 
-  test('the flow particle travels once the diagram is revealed', async ({ page }) => {
+  // The travelling token was dropped in favour of a per-node activation wave
+  // (`vis-activate`): CSS `offset-path` proved unreliable across engines, and
+  // the plan already names that as the sanctioned fallback. This test asserts
+  // the diagram still assembles on reveal — the drawn path reaches zero offset
+  // and the nodes settle at full opacity — so "knowledge moves" is conveyed
+  // without a literal moving dot.
+  test('the flow diagram assembles once revealed', async ({ page }) => {
     await page.goto('/');
-    const particle = page.locator('.vis-particle');
-    test.skip((await particle.count()) === 0, 'particle not implemented');
-
-    await particle.scrollIntoViewIfNeeded();
+    const diagram = page.locator('.vis-draw').first();
+    await diagram.scrollIntoViewIfNeeded();
     await expect(page.locator('[data-reveal="visible"]').first()).toBeAttached();
 
-    const first = await particle.evaluate((element) =>
-      getComputedStyle(element).getPropertyValue('offset-distance'),
+    await expect(diagram).toHaveCSS('stroke-dashoffset', '0px');
+    await expect(page.locator('[data-reveal="visible"] .vis-node').first()).toHaveCSS(
+      'opacity',
+      '1',
     );
-    await page.waitForTimeout(400);
-    const second = await particle.evaluate((element) =>
-      getComputedStyle(element).getPropertyValue('offset-distance'),
-    );
-    expect(first).not.toBe(second);
   });
 });

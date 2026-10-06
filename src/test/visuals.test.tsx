@@ -23,10 +23,16 @@ const BANNED_SVG = [
   '@font-face',
 ];
 
-describe('hero session script', () => {
-  it('exists in both the Vite template and the prerender document', () => {
-    expect(read(join(ROOT, 'index.html'))).toContain('ka:hero-played');
-    expect(read(join(ROOT, 'scripts', 'prerender.tsx'))).toContain('ka:hero-played');
+describe('hero replay', () => {
+  it('does not persist the hero across sessions', () => {
+    // The hero plays on every hard page load and is suppressed on SPA return by
+    // a DOM-only class. A sessionStorage gate would freeze it after the first
+    // visit in a session, which is the bug this guard exists to prevent.
+    expect(read(join(ROOT, 'index.html'))).not.toContain('sessionStorage');
+    expect(read(join(ROOT, 'scripts', 'prerender.tsx'))).not.toContain('sessionStorage');
+    expect(read(join(ROOT, 'src', 'components', 'visuals', 'KnowledgeAssembly.tsx'))).not.toContain(
+      'sessionStorage',
+    );
   });
 });
 

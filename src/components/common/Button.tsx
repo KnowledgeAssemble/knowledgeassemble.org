@@ -39,13 +39,13 @@ export default function Button({
   className = '',
   withArrow = false,
 }: ButtonProps) {
-  const classes = `group focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-4 py-2 text-body-md font-medium transition-colors ${variantStyles[variant]} ${className}`;
+  const classes = `group focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-control px-4 py-2 text-body-md font-medium transition-colors duration-[var(--motion-micro)] ease-out ${variantStyles[variant]} ${className}`;
 
   const content = (
     <>
       <span>{children}</span>
       {withArrow ? (
-        <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1 group-focus-visible:translate-x-1" />
+        <ArrowRight className="h-4 w-4 shrink-0 transition-transform duration-[var(--motion-micro)] ease-out group-hover:translate-x-1 group-focus-visible:translate-x-1" />
       ) : null}
     </>
   );

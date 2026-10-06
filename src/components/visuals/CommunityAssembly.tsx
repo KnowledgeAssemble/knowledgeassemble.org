@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useRevealOnScroll } from '../../hooks/useRevealOnScroll';
 
 type CommunityAssemblyProps = {
@@ -5,17 +6,18 @@ type CommunityAssemblyProps = {
 };
 
 const contributors = [
-  { cy: 36 },
-  { cy: 72 },
-  { cy: 108 },
-  { cy: 144 },
-  { cy: 180 },
+  { cy: 36, d: 0 },
+  { cy: 72, d: 100 },
+  { cy: 108, d: 200 },
+  { cy: 144, d: 300 },
+  { cy: 180, d: 400 },
 ] as const;
 
 /**
  * Contributors assembling knowledge (spec §27–§28). Decorative: the five track
  * labels already exist in the page copy, so they are deliberately not repeated
- * into the SVG. Draws on reveal, then holds still.
+ * into the SVG. On reveal the contributor nodes pop in sequence, their lines
+ * draw toward the centre, and the central node resolves.
  */
 export default function CommunityAssembly({ className = '' }: CommunityAssemblyProps) {
   const ref = useRevealOnScroll<HTMLDivElement>();
@@ -31,26 +33,47 @@ export default function CommunityAssembly({ className = '' }: CommunityAssemblyP
         focusable="false"
         className="h-auto w-full"
       >
-        <g className="stroke-rule" strokeWidth={1.5}>
-          {contributors.map(({ cy }) => (
+        <g strokeWidth={1.5}>
+          {contributors.map(({ cy }, i) => (
             <line
               key={cy}
-              x1="48"
+              x1="40"
               y1={cy}
-              x2="240"
+              x2="256"
               y2="108"
               pathLength={1}
-              className="vis-draw"
+              className="vis-draw stroke-ink-tertiary"
+              style={{ '--draw': `${200 + i * 100}ms` } as CSSProperties}
             />
           ))}
         </g>
-        <g strokeWidth={1.5} className="stroke-ink-tertiary fill-surface">
-          {contributors.map(({ cy }) => (
-            <circle key={cy} cx="40" cy={cy} r="8" />
+        <g strokeWidth={1.5} className="fill-surface">
+          {contributors.map(({ cy, d }) => (
+            <circle
+              key={cy}
+              cx="40"
+              cy={cy}
+              r="8"
+              className="vis-node stroke-ink-tertiary"
+              style={{ '--d': `${d}ms` } as CSSProperties}
+            />
           ))}
         </g>
-        <circle cx="256" cy="108" r="18" strokeWidth={1.5} className="stroke-accent fill-surface" />
-        <circle cx="256" cy="108" r="5" className="fill-accent" />
+        <circle
+          cx="256"
+          cy="108"
+          r="18"
+          strokeWidth={1.5}
+          className="vis-resolve stroke-accent fill-surface"
+          style={{ '--resolve': '1500ms' } as CSSProperties}
+        />
+        <circle
+          cx="256"
+          cy="108"
+          r="5"
+          className="vis-resolve fill-accent"
+          style={{ '--resolve': '1600ms' } as CSSProperties}
+        />
       </svg>
     </div>
   );

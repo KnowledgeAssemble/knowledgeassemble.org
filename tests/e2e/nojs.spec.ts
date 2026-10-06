@@ -44,7 +44,7 @@ test.describe('no-JS content', () => {
     const page = await context.newPage();
     await page.goto('/');
 
-    await expect(page.locator('[data-hero-seq]:visible').first()).toHaveCSS('opacity', '1');
+    await expect(page.locator('[data-hero-node]:visible').first()).toHaveCSS('opacity', '1');
     await expect(page.locator('.vis-draw').first()).toHaveCSS('stroke-dashoffset', '0px');
 
     await context.close();

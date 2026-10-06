@@ -54,7 +54,7 @@ export default function ProjectCard({
           <div className="h-16">
             <ProjectVisual
               projectId={project.id}
-              className="vis-project h-16 w-auto transition-transform duration-200 group-hover:translate-x-1 group-focus-within:translate-x-1"
+              className="vis-project h-16 w-auto transition-transform duration-[var(--motion-small)] ease-out group-hover:translate-x-1 group-focus-within:translate-x-1"
             />
           </div>
         ) : null}
@@ -82,7 +82,7 @@ export default function ProjectCard({
           ) : (
             <Link
               to="/projects"
-              className="focus-ring inline-flex min-h-11 items-center gap-1.5 rounded-control text-body-md font-medium text-accent transition-colors hover:text-accent-hover"
+              className="focus-ring inline-flex min-h-11 items-center gap-1.5 rounded-control text-body-md font-medium text-accent transition-colors duration-[var(--motion-micro)] ease-out hover:text-accent-hover"
             >
               <span>{ctaText}</span>
               <ArrowRight className="h-4 w-4" />

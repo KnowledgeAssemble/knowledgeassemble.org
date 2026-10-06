@@ -20,7 +20,7 @@ export default function PrincipleCard({ principle }: PrincipleCardProps) {
       <div ref={revealRef} className="mt-3 h-12 w-12">
         <PrincipleVisual
           principleId={principle.id}
-          className="vis-principle h-12 w-12 transition-transform duration-200 group-hover:-translate-y-0.5"
+          className="vis-principle h-12 w-12 transition-transform duration-[var(--motion-micro)] ease-out group-hover:-translate-y-0.5"
         />
       </div>
       <h3 className="mt-3 text-headline-sm text-ink">{principle.title}</h3>
