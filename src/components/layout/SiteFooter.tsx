@@ -50,7 +50,7 @@ export default function SiteFooter() {
 
           <div className="border-t border-rule pt-6">
             <p className="text-body-sm text-ink-tertiary">
-              © 2026 KnowledgeAssembly. Released under the MIT License.
+              © 2026 KnowledgeAssemble. Released under the MIT License.
             </p>
           </div>
         </div>

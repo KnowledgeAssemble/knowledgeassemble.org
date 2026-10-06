@@ -7,7 +7,7 @@
   "description": "Public website for KnowledgeAssemble. React 19 + Vite 7 + TypeScript (strict) + Tailwind CSS v4.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/KnowledgeAssembly/knowledgeassemble.org.git"
+    "url": "git+https://github.com/KnowledgeAssemble/knowledgeassemble.org.git"
   },
   "engines": {
     "node": ">=22.12.0"

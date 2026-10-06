@@ -5,8 +5,8 @@ import { LINKS } from './links';
 const entries = Object.entries(LINKS);
 
 describe('link registry', () => {
-  it('exposes the four verified URLs', () => {
-    expect(entries).toHaveLength(4);
+  it('exposes the five verified URLs', () => {
+    expect(entries).toHaveLength(5);
   });
 
   it('are all well-formed https URLs', () => {

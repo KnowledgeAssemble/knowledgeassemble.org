@@ -86,7 +86,7 @@ Violating any of these fails the phase.
 - **External URLs only from the config layer:** `src/config/links.ts` for
   third-party destinations, and `src/config/site.ts` for the site's own origin.
   Never inline one anywhere else. Never invent a domain: OpenEdu is
-  `github.com/KnowledgeAssembly/open-edu`; `openedu.org` is wrong and does not
+  `github.com/KnowledgeAssemble/open-edu`; `openedu.org` is wrong and does not
   resolve.
 - **Canonical and `og:url` are per-route and generated at build time.** `siteUrl`
   in `src/config/site.ts` is the live apex `https://knowledgeassemble.org`; the
@@ -130,7 +130,7 @@ or adoption claims that do not exist.
 ## Git
 
 `main` tracks `origin/main` on the private-then-public repo
-`KnowledgeAssembly/knowledgeassemble.org` (MIT). Commit only when the user asks.
+`KnowledgeAssemble/knowledgeassemble.org` (MIT). Commit only when the user asks.
 Never force-push, rewrite history, or amend a pushed commit.
 
 ## Open blockers

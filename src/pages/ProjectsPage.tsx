@@ -101,7 +101,10 @@ export default function ProjectsPage() {
               <ExternalLink href={LINKS.openedu} className="text-body-md">
                 OpenEdu repository
               </ExternalLink>
-              <ExternalLink href={LINKS.openeduSite} className="text-body-md">
+              <ExternalLink href={LINKS.openeduDocs} className="text-body-md">
+                Documentation
+              </ExternalLink>
+              <ExternalLink href={LINKS.openeduLiveDemo} className="text-body-md">
                 Live demo
               </ExternalLink>
             </div>

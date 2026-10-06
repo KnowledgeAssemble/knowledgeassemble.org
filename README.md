@@ -1,6 +1,6 @@
 # knowledgeassemble.org
 
-Public website for **KnowledgeAssemble**, an open-source umbrella organization stewarding tools that make knowledge portable and composable. Its first flagship project is [OpenEdu](https://github.com/KnowledgeAssembly/open-edu).
+Public website for **KnowledgeAssemble**, an open-source umbrella organization stewarding tools that make knowledge portable and composable. Its first flagship project is [OpenEdu](https://github.com/KnowledgeAssemble/open-edu).
 
 The site is live at the apex [`knowledgeassemble.org`](https://knowledgeassemble.org) on Vercel; the repo name matches the production domain. `www` does not resolve, and if it is ever added it must 301 to the apex.
 
