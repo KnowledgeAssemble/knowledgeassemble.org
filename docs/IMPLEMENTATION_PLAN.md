@@ -162,7 +162,7 @@ The Stitch mocks are **not** fully consistent with `DESIGN.md`. Build to `DESIGN
 
 #### 2. Projects (`/projects`)
 - **Header:** "Projects" + Framing narrative on exploring different facets of the knowledge ecosystem.
-- **Flagship Project:** Detailed spotlight on **OpenEdu** — an open runtime for educational experiences that separates content from delivery platforms (§11.3). Active status, architecture notes, CTA to `LINKS.openedu` (repo) and `LINKS.openeduSite` (live demo).
+- **Flagship Project:** Detailed spotlight on **OpenEdu** — an open runtime for educational experiences that separates content from delivery platforms (§11.3). Active status, architecture notes, CTA to `LINKS.openedu` (repo), `LINKS.openeduDocs` (docs), and `LINKS.openeduLiveDemo` (live demo).
 - **Knowledge Systems Section:** Structured exploration into decoupled formats, AST definitions, and graph engines.
 - **Experiments & Prototypes Section:** Small, agile explorations and proof-of-concepts.
 - **Umbrella Hierarchy Diagram:** Clear ASCII/SVG structural tree showing how KnowledgeAssemble hosts projects.
@@ -349,7 +349,8 @@ export const LINKS = {
   // published demo. Note the hyphen: the org has several similarly named
   // repos (open-edu, open-edu-interactive, openedu-library, open-edu-pipeline).
   openedu: "https://github.com/KnowledgeAssemble/open-edu",
-  openeduSite: "https://knowledgeassemble.github.io/open-edu/",
+  openeduDocs: "https://knowledgeassemble.github.io/open-edu/",
+  openeduLiveDemo: "https://learn.knowledgeassemble.org",
 } as const;
 ```
 
@@ -717,7 +718,8 @@ Verified from the `open-edu` README, so site copy describes the real project:
 - **Positioning:** "An open runtime for educational experiences that separates content from delivery platforms." This is the same decoupling thesis as PRD §15, so `/about` and `/projects` can reference it truthfully.
 - **Format:** Learning packages are Markdown + JSON, validated and rendered through a configurable runtime, distributed as `.oep` files.
 - **Accessibility:** Built-in accessibility and telemetry are part of the runtime, supporting PRD §13.5 (accessibility as foundational) with a real example.
-- **Live demo:** `https://knowledgeassemble.github.io/open-edu/` returns HTTP 200 — verified suitable as the `openeduSite` CTA target. Re-verified after the org rename; the old `knowledgeassembly.github.io` host now 404s.
+- **Documentation:** `https://knowledgeassemble.github.io/open-edu/` returns HTTP 200 — verified suitable as the `openeduDocs` CTA target. Re-verified after the org rename; the old `knowledgeassembly.github.io` host now 404s.
+- **Live demo:** `https://learn.knowledgeassemble.org` returns HTTP 200 — verified suitable as the `openeduLiveDemo` CTA target.
 
 Do **not** claim OpenEdu features the repo does not have, and do not describe it as a product with users or scale (PRD §36: do not manufacture products, community, or scale).
 

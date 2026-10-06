@@ -64,8 +64,8 @@ export default function AboutPage() {
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-4">
             <Button href={LINKS.openedu}>Explore OpenEdu</Button>
-            <Button href={LINKS.openeduSite} variant="outline">
-              Live demo
+            <Button href={LINKS.openeduDocs} variant="outline">
+              Documentation
             </Button>
           </div>
         </div>

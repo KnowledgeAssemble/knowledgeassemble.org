@@ -15,5 +15,6 @@ export const LINKS = {
   // published demo. Note the hyphen: the org has several similarly named
   // repos (open-edu, open-edu-interactive, openedu-library, open-edu-pipeline).
   openedu: 'https://github.com/KnowledgeAssemble/open-edu',
-  openeduSite: 'https://knowledgeassemble.github.io/open-edu/',
+  openeduDocs: 'https://knowledgeassemble.github.io/open-edu/',
+  openeduLiveDemo: 'https://learn.knowledgeassemble.org',
 } as const;
