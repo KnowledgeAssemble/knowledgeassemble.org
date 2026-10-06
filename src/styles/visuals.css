@@ -1,0 +1,213 @@
+/*
+ * Motion & visual layer (spec docs/MOTION-WEBSITE-SPEC.md).
+ *
+ * Motion tokens live here rather than in the @theme block: that block is the
+ * single source of truth for colour, typography, and shape, and Tailwind maps
+ * its namespaces to utilities. These are consumed only by this file and the
+ * visual components. Colours still come from @theme via var(--color-*).
+ */
+:root {
+  --motion-micro: 180ms; /* spec §4.1 micro interaction */
+  --motion-small: 320ms; /* spec §4.1 small transition  */
+  --motion-reveal: 500ms; /* spec §4.1 section reveal    */
+  --motion-line: 700ms; /* spec §4.1 diagram assembly  */
+  --motion-ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --motion-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* A spring for node "pop" — the one place the layer takes a deliberate
+     overshoot, because an assembling graph should feel as if it snaps into
+     place rather than glides. */
+  --motion-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------------------------------------------------------------------------
+ * Scroll reveal (spec §32).
+ *
+ * The resting state of every element is its final, fully drawn state. The
+ * `pending` state exists only as an attribute the hook applies in the browser
+ * before paint; it is never present in JSX or the prerendered HTML, so no-JS
+ * readers, crawlers, and a failed bundle always get the finished content.
+ * ------------------------------------------------------------------------- */
+[data-reveal='pending'] {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+[data-reveal='visible'] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-reveal='pending'],
+[data-reveal='visible'] {
+  transition:
+    opacity var(--motion-reveal) var(--motion-ease-out),
+    transform var(--motion-reveal) var(--motion-ease-out);
+}
+
+/* ---------------------------------------------------------------------------
+ * Line drawing: `pathLength={1}` normalises the path, so a single dash unit
+ * animates the whole line (spec §17). Final state is drawn.
+ * ------------------------------------------------------------------------- */
+.vis-line,
+.vis-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* ---------------------------------------------------------------------------
+ * Shared keyframes — the single motion grammar reused by the hero, the flow
+ * diagram, and the community assembly (plan §4): stagger in, draw, then a
+ * travelling token lights each node and resolves at the destination. Every
+ * animation is finite; nothing loops.
+ * ------------------------------------------------------------------------- */
+@keyframes vis-node {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes vis-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* A node "lights up" as the token passes it: a brief scale swell and an accent
+   flash on its stroke. 0% and 100% are unset so the base stroke class wins
+   outside the flash. */
+@keyframes vis-activate {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.28);
+    stroke: var(--color-accent);
+  }
+  70% {
+    transform: scale(1.05);
+  }
+}
+
+/* The destination node pops in with a settle, and is the one moment that is
+   emphatically accent. */
+@keyframes vis-resolve {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Anything that scales needs the transform to be centred on its own bounds. */
+[data-hero-node],
+[data-hero-resolve],
+.vis-node,
+.vis-activate,
+.vis-resolve {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* ---------------------------------------------------------------------------
+ * Reveal-driven diagram motion. The section fades in via [data-reveal], and
+ * inside it the nodes pop, the edges draw, the token travels, and the
+ * destination resolves — each on its own stagger delay from the element's
+ * --d/--wave/--draw/--resolve custom properties.
+ * ------------------------------------------------------------------------- */
+[data-reveal='visible'] .vis-draw {
+  animation: vis-draw var(--motion-line) var(--motion-ease-out) var(--draw, 0ms) both;
+}
+
+[data-reveal='visible'] .vis-node {
+  animation: vis-node 460ms var(--motion-spring) var(--d, 0ms) both;
+}
+
+/* `none` fill rather than `both`: a backwards-filled second animation would
+   hold its first frame (scale 1) over the node's entry pop and cancel it. */
+[data-reveal='visible'] .vis-activate {
+  animation: vis-activate 420ms var(--motion-ease-in-out) var(--wave, 900ms) none;
+}
+
+[data-reveal='visible'] .vis-resolve {
+  animation: vis-resolve 520ms var(--motion-spring) var(--resolve, 900ms) both;
+}
+
+/* ---------------------------------------------------------------------------
+ * Hero assembly (spec §12). Pure CSS keyframes, so the render-blocking
+ * stylesheet applies them from the first paint and there is no flash. The
+ * `.hero-played` class is added by the hero component once the sequence has
+ * finished, and suppresses a replay on SPA return only — a hard reload starts a
+ * fresh document and plays again.
+ * ------------------------------------------------------------------------- */
+[data-hero-node] {
+  animation:
+    vis-node 460ms var(--motion-spring) var(--enter, 0ms) both,
+    vis-activate 420ms var(--motion-ease-in-out) var(--wave, 900ms) none;
+}
+
+[data-hero-line] {
+  animation: vis-draw var(--motion-line) var(--motion-ease-out) var(--draw, 0ms) both;
+}
+
+[data-hero-resolve] {
+  animation: vis-resolve 520ms var(--motion-spring) var(--resolve, 1200ms) both;
+}
+
+.hero-played [data-hero-node],
+.hero-played [data-hero-line],
+.hero-played [data-hero-resolve] {
+  animation: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * Navigation active indicator (spec §30). The underline animates into place
+ * via a per-link pseudo-element; no position-measuring machinery.
+ * ------------------------------------------------------------------------- */
+.vis-nav-link {
+  position: relative;
+}
+
+.vis-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  height: 1px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-small) var(--motion-ease-out);
+}
+
+.vis-nav-link[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+/* ---------------------------------------------------------------------------
+ * Reduced motion (spec §33, plan §4.6). The global reset in index.css zeroes
+ * durations and delays; this adds only what it cannot express.
+ * ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  /* A line that never animates must still be fully drawn. */
+  [data-reveal='pending'],
+  .vis-line,
+  .vis-draw {
+    stroke-dashoffset: 0 !important;
+  }
+}

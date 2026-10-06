@@ -31,6 +31,17 @@ client router, so JavaScript only enhances the already-present document.
 `index.html` is a minimal Vite template with an empty `#root`; route content
 and metadata live in the generated HTML.
 
+A small motion and SVG visual layer enhances several pages without breaking
+web-document-first: `src/styles/visuals.css` defines motion tokens, the
+below-the-fold scroll reveal, hero keyframes, and reduced-motion overrides;
+`src/hooks/useRevealOnScroll.ts` marks sections `data-reveal="pending|visible"`
+only in the browser (never in prerendered markup), so the resting CSS state is
+the final state; the hero assembles via pure CSS keyframes, and its component
+adds a DOM-only `hero-played` class after the sequence ends so an SPA return
+does not replay it while a hard reload plays it again (no `sessionStorage`);
+decorative visuals are `aria-hidden="true"` and `focusable="false"`. All
+motion is finite — there is no looping animation anywhere.
+
 Pages are built on the design tokens in `src/styles/index.css` (imported from
 `src/main.tsx`); content lives in `src/content/`, external URLs in
 `src/config/links.ts`, and site metadata in `src/config/site.ts`. Each page

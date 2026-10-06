@@ -34,4 +34,19 @@ test.describe('no-JS content', () => {
 
     await context.close();
   });
+
+  // Spec §40: the visuals' resting state is their final state, so with no
+  // JavaScript (and so no reveal hook, no session script) they are fully
+  // visible. This is the assertion that would catch a hidden-by-default
+  // implementation that the h1-text checks cannot.
+  test('visuals are fully visible without JavaScript', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto('/');
+
+    await expect(page.locator('[data-hero-node]:visible').first()).toHaveCSS('opacity', '1');
+    await expect(page.locator('.vis-draw').first()).toHaveCSS('stroke-dashoffset', '0px');
+
+    await context.close();
+  });
 });

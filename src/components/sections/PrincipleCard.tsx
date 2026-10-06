@@ -1,4 +1,6 @@
 import type { PrincipleItem } from '../../types';
+import { useRevealOnScroll } from '../../hooks/useRevealOnScroll';
+import PrincipleVisual from '../visuals/PrincipleVisual';
 
 type PrincipleCardProps = {
   principle: PrincipleItem;
@@ -10,9 +12,17 @@ type PrincipleCardProps = {
  * the UI (plan §5.2).
  */
 export default function PrincipleCard({ principle }: PrincipleCardProps) {
+  const revealRef = useRevealOnScroll<HTMLDivElement>();
+
   return (
-    <article className="flex h-full flex-col rounded-panel border border-rule bg-surface p-6">
+    <article className="group flex h-full flex-col rounded-panel border border-rule bg-surface p-6">
       <span className="font-mono text-label-md text-accent">{principle.number}</span>
+      <div ref={revealRef} className="mt-3 h-12 w-12">
+        <PrincipleVisual
+          principleId={principle.id}
+          className="vis-principle h-12 w-12 transition-transform duration-[var(--motion-micro)] ease-out group-hover:-translate-y-0.5"
+        />
+      </div>
       <h3 className="mt-3 text-headline-sm text-ink">{principle.title}</h3>
       <p className="mt-3 text-body-md text-ink-secondary">{principle.summary}</p>
       {principle.body.length > 0 ? (

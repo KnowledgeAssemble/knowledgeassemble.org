@@ -134,14 +134,18 @@
     outline-offset: 2px;
   }
 
-  /* Global reduced-motion reset (plan §6.1). */
+  /* Global reduced-motion reset (plan §6.1). Delays are zeroed too, so staged
+     sequences (the hero) complete on the first frame instead of sitting in a
+     hidden from-state. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
       scroll-behavior: auto !important;
     }
   }

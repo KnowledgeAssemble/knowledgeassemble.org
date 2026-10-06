@@ -15,7 +15,7 @@ const navItems = [
 ] as const;
 
 const desktopLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `focus-ring inline-flex min-h-11 items-center rounded-control px-3 text-body-md transition-colors ${
+  `vis-nav-link focus-ring inline-flex min-h-11 items-center rounded-control px-3 text-body-md transition-colors ${
     isActive ? 'text-accent' : 'text-ink-secondary hover:text-ink'
   }`;
 
