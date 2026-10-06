@@ -515,7 +515,7 @@ Content data files land in Phase 5, after the shell renders, so page structure i
 ### Detailed Phase Tasks
 
 #### Phase 1: Licensing, Repo Setup & Scaffolding
-- **`LICENSE` is already done.** MIT, © 2026 KnowledgeAssembly, committed at the repo root and made public on 2026-10-05. The site asserts "Open source, by default" (PRD §10) and PRD §16 requires an open-source identity, so this was treated as a blocker rather than a nicety. Remaining Phase 1 licensing work: declare `"license": "MIT"` in `package.json`, and add the footer license line in Phase 4.
+- **`LICENSE` is already done.** MIT, © 2026 KnowledgeAssembly, committed at the repo root and made public on 2026-10-05 — the holder line was updated to `KnowledgeAssemble` on 2026-10-06 alongside the org rename. The site asserts "Open source, by default" (PRD §10) and PRD §16 requires an open-source identity, so this was treated as a blocker rather than a nicety. Remaining Phase 1 licensing work: declare `"license": "MIT"` in `package.json`, and add the footer license line in Phase 4.
 - Initialize React 19 + TypeScript strict + Vite 7 workspace.
 - Install: `tailwindcss`, `@tailwindcss/vite`, `react-router-dom`. **No PostCSS, no autoprefixer** — the Vite plugin replaces it.
 - Install `@fontsource/ibm-plex-sans`, `@fontsource/jetbrains-mono` (self-hosted; no Google Fonts link).
@@ -609,7 +609,7 @@ The final four items in the Technical block are carried over from PRD §32 and w
 - [ ] No fake metrics, fictional testimonials, or phantom SaaS features.
 
 ### Legal & Licensing
-- [x] `LICENSE` present at repo root (MIT, © 2026 KnowledgeAssembly).
+- [x] `LICENSE` present at repo root (MIT, © 2026 KnowledgeAssemble).
 - [ ] `package.json` declares `"license": "MIT"` — Phase 1.
 - [ ] Footer names the license — Phase 4.
 - [ ] All external URLs in `LINKS` resolve (HTTP 200/301) and point at the correct `KnowledgeAssemble` repos per §11.2 — no invented domains, no `openedu.org`.
@@ -667,7 +667,7 @@ Reinforcing PRD §31: no accounts, auth, CMS, blog engine, comments, newsletter,
 | # | Question | Resolution |
 | :--- | :--- | :--- |
 | 1 | **External URLs** for the GitHub org, this repo, OpenEdu repo, and OpenEdu site | Verified against the live org. `github.com/KnowledgeAssemble`; this repo at `KnowledgeAssemble/knowledgeassemble.org`; OpenEdu at `KnowledgeAssemble/open-edu` with its Pages site at `knowledgeassemble.github.io/open-edu/`. The invented `openedu.org` domain was removed — it does not resolve. Re-verified after the org rename on 2026-10-06. Recorded in §5.1. |
-| 2 | **License choice** | **MIT**, `LICENSE` committed at repo root (2026-10-05), copyright holder `KnowledgeAssembly`. Must be mirrored in `package.json` (`"license": "MIT"`) and named in the site footer (Phase 1, Phase 4). | Resolved |
+| 2 | **License choice** | **MIT**, `LICENSE` committed at repo root (2026-10-05), copyright holder `KnowledgeAssemble`. Must be mirrored in `package.json` (`"license": "MIT"`) and named in the site footer (Phase 1, Phase 4). | Resolved |
 | 3 | **Domain registration + deployed origin** for `siteUrl` | Registered and live at the apex **`https://knowledgeassemble.org`** on Vercel (2026-10-05). `www` does not resolve. `siteUrl` is set, so canonical and `og:url` are absolute on every route. |
 | 4 | **Deploy target** | **Vercel.** `vercel.json` uses `cleanUrls` with `trailingSlash: false`; the five routes are prerendered static files and `dist/404.html` is the static 404. Verified in production. |
 | 5 | **Is CSR acceptable** given PRD §22? | **Superseded by prerendering.** All five canonical routes produce meaningful HTML at build time (gap closure §4, §22); client-side JavaScript only enhances. |
