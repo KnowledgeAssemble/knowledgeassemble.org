@@ -3,7 +3,7 @@
 **Status:** Ready for implementation
 **Date:** 2026-10-05
 **Scope:** Review and close remaining V1 gaps on `knowledgeassemble.org`
-**Repository:** `KnowledgeAssembly/knowledgeassemble.org`
+**Repository:** `KnowledgeAssemble/knowledgeassemble.org`
 **Production:** `https://knowledgeassemble.org`
 
 ---

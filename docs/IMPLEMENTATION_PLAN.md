@@ -337,29 +337,29 @@ knowledgeassemble.org/
 
 ### 5.1 Link Registry (`src/config/links.ts`)
 
-URLs below were **verified against the live KnowledgeAssembly GitHub organization** and are no longer placeholders. PRD §26: *"The actual KnowledgeAssemble GitHub/OpenEdu URLs should be confirmed from the project configuration rather than invented."*
+URLs below were **verified against the live KnowledgeAssemble GitHub organization** and are no longer placeholders. PRD §26: *"The actual KnowledgeAssemble GitHub/OpenEdu URLs should be confirmed from the project configuration rather than invented."*
 
 ```typescript
 export const LINKS = {
-  // Verified against github.com/KnowledgeAssembly — see §10 Q1 (resolved).
-  githubOrg: "https://github.com/KnowledgeAssembly",
-  githubRepo: "https://github.com/KnowledgeAssembly/knowledgeassemble.org", // this repo
+  // Verified against github.com/KnowledgeAssemble — see §10 Q1 (resolved).
+  githubOrg: "https://github.com/KnowledgeAssemble",
+  githubRepo: "https://github.com/KnowledgeAssemble/knowledgeassemble.org", // this repo
 
   // OpenEdu flagship. Repo is the canonical artifact; the Pages site is its
   // published demo. Note the hyphen: the org has several similarly named
   // repos (open-edu, open-edu-interactive, openedu-library, open-edu-pipeline).
-  openedu: "https://github.com/KnowledgeAssembly/open-edu",
-  openeduSite: "https://knowledgeassembly.github.io/open-edu/",
+  openedu: "https://github.com/KnowledgeAssemble/open-edu",
+  openeduSite: "https://knowledgeassemble.github.io/open-edu/",
 } as const;
 ```
 
-**Correction from the previous draft.** It listed `github.com/knowledgeassemble` (lowercase, wrong owner — the real org is `KnowledgeAssembly`, capital A) and `openedu.org`. The `.org` domain does not resolve at all; it was an invented placeholder and has been removed. The canonical OpenEdu destination is the `open-edu` repository, with its GitHub Pages deployment as the public-facing site.
+**Correction from the previous draft.** It listed `github.com/knowledgeassemble` (lowercase, wrong owner) and `openedu.org`. The `.org` domain does not resolve at all; it was an invented placeholder and has been removed. The canonical OpenEdu destination is the `open-edu` repository, with its GitHub Pages deployment as the public-facing site.
 
-**Org naming:** the GitHub org is `KnowledgeAssembly` while the brand is `KnowledgeAssemble`. This is not a typo — do not "correct" URLs to match the brand spelling.
+**Org naming:** the GitHub org was renamed from `KnowledgeAssembly` to `KnowledgeAssemble` on 2026-10-06, so the org and the brand now match. The old handle does not resolve and redirects do not save it — `knowledgeassembly.github.io` 404s while `knowledgeassemble.github.io/open-edu/` returns 200. GitHub keeps the org id stable across a rename (still `312102580`), so this is the same organization, not a successor.
 
-**This repository is public and MIT-licensed.** The repo is named `knowledgeassemble.org` to match the production domain, so `gh api repos/KnowledgeAssembly/knowledgeassemble.org` and a bare `curl` both return 200. License and visibility questions are closed (§10 Q2, Q6).
+**This repository is public and MIT-licensed.** The repo is named `knowledgeassemble.org` to match the production domain, so `gh api repos/KnowledgeAssemble/knowledgeassemble.org` and a bare `curl` both return 200. License and visibility questions are closed (§10 Q2, Q6).
 
-**The repo name is a URL, not a typo.** It matches the production domain `knowledgeassemble.org`, which is **registered and live** (§10 Q3 resolved). Do not "normalize" it to `knowledgeassemble-website`. Note that the repo name, the GitHub org (`KnowledgeAssembly`), and the brand (`KnowledgeAssemble`) are three distinct strings — verify each against this registry rather than assuming they match.
+**The repo name is a URL, not a typo.** It matches the production domain `knowledgeassemble.org`, which is **registered and live** (§10 Q3 resolved). Do not "normalize" it to `knowledgeassemble-website`. Note that the repo name (`knowledgeassemble.org`) and the org (`KnowledgeAssemble`) are two distinct strings — verify each against this registry rather than assuming they match.
 
 **`LINKS` contains no self-link.** `githubRepo` is the repository; the deployed site URL is a separate concern owned by `siteUrl` (§4.3), since it is unresolved until the domain is registered. Do not add a `site` entry to `LINKS` that duplicates it.
 
@@ -612,7 +612,7 @@ The final four items in the Technical block are carried over from PRD §32 and w
 - [x] `LICENSE` present at repo root (MIT, © 2026 KnowledgeAssembly).
 - [ ] `package.json` declares `"license": "MIT"` — Phase 1.
 - [ ] Footer names the license — Phase 4.
-- [ ] All external URLs in `LINKS` resolve (HTTP 200/301) and point at the correct `KnowledgeAssembly` repos per §11.2 — no invented domains, no `openedu.org`.
+- [ ] All external URLs in `LINKS` resolve (HTTP 200/301) and point at the correct `KnowledgeAssemble` repos per §11.2 — no invented domains, no `openedu.org`.
 
 ### Design Alignment
 - [ ] Warm paper canvas (`#FBFBF9`), charcoal ink (`#1C1F23`), mineral accents (`#164E63`, `#2D5A46`).
@@ -666,7 +666,7 @@ Reinforcing PRD §31: no accounts, auth, CMS, blog engine, comments, newsletter,
 
 | # | Question | Resolution |
 | :--- | :--- | :--- |
-| 1 | **External URLs** for the GitHub org, this repo, OpenEdu repo, and OpenEdu site | Verified against the live org. `github.com/KnowledgeAssembly`; this repo at `KnowledgeAssembly/knowledgeassemble.org`; OpenEdu at `KnowledgeAssembly/open-edu` with its Pages site at `knowledgeassembly.github.io/open-edu/`. The invented `openedu.org` domain was removed — it does not resolve. Recorded in §5.1. |
+| 1 | **External URLs** for the GitHub org, this repo, OpenEdu repo, and OpenEdu site | Verified against the live org. `github.com/KnowledgeAssemble`; this repo at `KnowledgeAssemble/knowledgeassemble.org`; OpenEdu at `KnowledgeAssemble/open-edu` with its Pages site at `knowledgeassemble.github.io/open-edu/`. The invented `openedu.org` domain was removed — it does not resolve. Re-verified after the org rename on 2026-10-06. Recorded in §5.1. |
 | 2 | **License choice** | **MIT**, `LICENSE` committed at repo root (2026-10-05), copyright holder `KnowledgeAssembly`. Must be mirrored in `package.json` (`"license": "MIT"`) and named in the site footer (Phase 1, Phase 4). | Resolved |
 | 3 | **Domain registration + deployed origin** for `siteUrl` | Registered and live at the apex **`https://knowledgeassemble.org`** on Vercel (2026-10-05). `www` does not resolve. `siteUrl` is set, so canonical and `og:url` are absolute on every route. |
 | 4 | **Deploy target** | **Vercel.** `vercel.json` uses `cleanUrls` with `trailingSlash: false`; the five routes are prerendered static files and `dist/404.html` is the static 404. Verified in production. |
@@ -687,13 +687,13 @@ Reinforcing PRD §31: no accounts, auth, CMS, blog engine, comments, newsletter,
 
 ## 11. Verified External Context
 
-Facts confirmed against the live `KnowledgeAssembly` GitHub org and `open-edu` repository. Recorded so later phases do not re-derive or re-guess them.
+Facts confirmed against the live `KnowledgeAssemble` GitHub org and `open-edu` repository. Recorded so later phases do not re-derive or re-guess them.
 
 ### 11.1 Organization
 
-- Org `KnowledgeAssembly` (id `312102580`), created 2026-08-02. Brand spelling is `KnowledgeAssemble`; the GitHub handle is `KnowledgeAssembly`.
-- The website repo `KnowledgeAssembly/knowledgeassemble.org` was created 2026-10-05, is **public**, and is **MIT-licensed**. It is named for the production domain `knowledgeassemble.org`, not for the brand spelling — the org (`KnowledgeAssembly`), the repo (`knowledgeassemble.org`), and the brand (`KnowledgeAssemble`) are three distinct strings.
-- Remote repo directory is `KnowledgeAssembly/knowledgeassemble.org`, matching the repo name. The path contains a dot, which is fine for Git and Vite but worth knowing when scripting.
+- Org `KnowledgeAssemble` (id `312102580`), created 2026-08-02. **Renamed from `KnowledgeAssembly` to `KnowledgeAssemble` on 2026-10-06.** The org handle and the brand spelling now match; the old handle does not resolve.
+- The website repo `KnowledgeAssemble/knowledgeassemble.org` was created 2026-10-05, is **public**, and is **MIT-licensed**. It is named for the production domain `knowledgeassemble.org`, so the repo (`knowledgeassemble.org`) and the org (`KnowledgeAssemble`) remain two distinct strings.
+- Remote repo directory is `KnowledgeAssemble/knowledgeassemble.org`, matching the repo name. The path contains a dot, which is fine for Git and Vite but worth knowing when scripting.
 - A **local** clone of that repo may still sit in a directory named after the pre-rename project (e.g. `knowledgeassemble-website`) — `git remote -v` is the authority, not the local folder name.
 
 ### 11.2 OpenEdu Repos — Disambiguation Required
@@ -702,11 +702,11 @@ The org contains several similarly named repositories. `open-edu` is the flagshi
 
 | Repo | Visibility | Description | Use on site |
 | :--- | :--- | :--- | :--- |
-| `KnowledgeAssembly/open-edu` | public | Open-Edu Framework: an open runtime for portable, accessible educational experiences | **Yes — this is OpenEdu** |
-| `KnowledgeAssembly/open-edu-interactive` | public | (no description) | No |
-| `KnowledgeAssembly/openedu-library` | public | (no description) | No |
-| `KnowledgeAssembly/open-edu-pipeline` | public | (no description) | No |
-| `KnowledgeAssembly/openedu-geo-assets` | private | India Geo Assets pipeline: topojson boundary/point/river/lake assets | No |
+| `KnowledgeAssemble/open-edu` | public | Open-Edu Framework: an open runtime for portable, accessible educational experiences | **Yes — this is OpenEdu** |
+| `KnowledgeAssemble/open-edu-interactive` | public | (no description) | No |
+| `KnowledgeAssemble/openedu-library` | public | (no description) | No |
+| `KnowledgeAssemble/open-edu-pipeline` | public | (no description) | No |
+| `KnowledgeAssemble/openedu-geo-assets` | private | India Geo Assets pipeline: topojson boundary/point/river/lake assets | No |
 
 The name contains a **hyphen** (`open-edu`). The previous draft's `openedu` (no hyphen) did not exist.
 
@@ -717,7 +717,7 @@ Verified from the `open-edu` README, so site copy describes the real project:
 - **Positioning:** "An open runtime for educational experiences that separates content from delivery platforms." This is the same decoupling thesis as PRD §15, so `/about` and `/projects` can reference it truthfully.
 - **Format:** Learning packages are Markdown + JSON, validated and rendered through a configurable runtime, distributed as `.oep` files.
 - **Accessibility:** Built-in accessibility and telemetry are part of the runtime, supporting PRD §13.5 (accessibility as foundational) with a real example.
-- **Live demo:** `https://knowledgeassembly.github.io/open-edu/` returns HTTP 200 — verified suitable as the `openeduSite` CTA target.
+- **Live demo:** `https://knowledgeassemble.github.io/open-edu/` returns HTTP 200 — verified suitable as the `openeduSite` CTA target. Re-verified after the org rename; the old `knowledgeassembly.github.io` host now 404s.
 
 Do **not** claim OpenEdu features the repo does not have, and do not describe it as a product with users or scale (PRD §36: do not manufacture products, community, or scale).
 
